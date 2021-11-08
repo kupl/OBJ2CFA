@@ -98,5 +98,5 @@ $ ./run -jre1.6 1-object-sensitive+heap+tunneling <pgm.jar>
 
 
 ### Artifact (VirtualBox Image)
-We've archived a ready-to-run version of our implementation in zenodo([Link](https://zenodo.org/record/5652640#.YYjZq3UzYwY))
+We've archived a ready-to-run version of our implementation in zenodo([Link](https://zenodo.org/record/5652640#.YYjZq3UzYwY)).
 
