@@ -62,3 +62,18 @@ The results say that
 - The analysis 51.32 seconds
 - The results for the clients (VarPtsTo, #may-fail casts, #call-graph-edges, #reachable-methods, #polymorphic-calls)
 
+### Running Doop
+
+
+
+### Running Doop with 1callH+SL
+
+
+
+### Running Doop with 1callH+S
+
+
+
+### Artifact (VirtualBox Image)
+We've archived a ready-to-run version of our implementation in zenodo(Link)
+
