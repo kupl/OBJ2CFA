@@ -36,7 +36,7 @@ If you need to install Datalog engine, please visit [this page](http://snf-70553
 Verifying installation is very easy. First, move to "OBJ2CFA/doop/". Then, you can check the installation by running the following command:
 
 ```
-$ ./run.py 1callH+SL luindex
+$ ./run -jre1.6 1-tunneled-call-site-sensitive+heap jars/dacapo/luindex.jar
 ```
 
 You will see the results as follows:
