@@ -1,0 +1,14 @@
+TunnelingAbstractionInvo(?invocation)<-
+  !Left2(?invocation),
+  LearnInvocation(?invocation),
+  MethodInvocationRef(?invocation).
+
+
+
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo),Feature14(?invo),Feature61(?invo),Feature63(?invo),Feature26(?invo).
+
+LearnInvocation(?invo), B(?invo)<-MethodInvocationRef(?invo),Feature30(?invo),Feature42(?invo),Feature61(?invo),Feature63(?invo),Feature69(?invo),Feature26(?invo),Feature47(?invo),Feature28(?invo),Feature51(?invo),Feature59(?invo),Feature16(?invo),Feature33(?invo),Feature53(?invo),Feature25(?invo),Feature21(?invo),Feature57(?invo).
+
+LearnInvocation(?invo), A(?invo)<-MethodInvocationRef(?invo),Feature33(?invo),Feature42(?invo),Feature61(?invo),Feature63(?invo),Feature68(?invo),Feature45(?invo),Feature29(?invo),Feature41(?invo),Feature0(?invo),Feature2(?invo),Feature5(?invo),Feature7(?invo),Feature39(?invo),Feature65(?invo),Feature11(?invo),Feature13(?invo),Feature17(?invo),Feature19(?invo),Feature37(?invo),Feature35(?invo),Feature55(?invo),Feature57(?invo).
+

@@ -1,0 +1,48 @@
+D2(?meth)->MethodSignatureRef(?meth).
+VeryImportantMethod(?method)->MethodSignatureRef(?method).
+
+NormalHeapMethod[?heap] = ?inmethod -> HeapAllocationRef(?heap),MethodSignatureRef(?inmethod). 
+
+NormalHeapMethod[?heap] = ?inmethod,Normal(?heap)<-
+  AssignNormalHeapAllocation(?heap, _, ?inmethod).
+
+
+MethodsCounts[?method]=?n<-
+  agg<<?n = count()>> AssignHeapAllocation(_, _, ?method).
+
+StaticMethodInvocation:Method[?invocation] = ?inmethod <-
+  StaticMethodInvocation:In(?invocation, ?inmethod).
+
+
+OneHeapMethods(?meth)<-
+  MethodsCounts[?meth] = ?n,
+  ?n=1.
+
+ManyMethodClass(?class)<-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20.
+
+
+D2(?meth)<-
+Feature0(?meth),Feature8(?meth),Feature25(?meth),
+MethodSignatureRef(?meth).
+
+D2(?meth)<-
+Feature16(?meth),Feature8(?meth),Feature6(?meth),Feature11(?meth),Feature1(?meth),
+MethodSignatureRef(?meth).
+
+
+
+
+VeryImportantMethod(?meth)<-
+  Feature18(?meth),Feature8(?meth),Feature22(?meth),Feature21(?meth),Feature5(?meth),Feature6(?meth),Feature17(?meth),Feature1(?meth),Feature13(?meth),Feature3(?meth),Feature25(?meth),Feature15(?meth),
+MethodSignatureRef(?meth).
+
+VeryImportantMethod(?meth)<-
+  Feature2(?meth),Feature8(?meth),Feature5(?meth),Feature6(?meth),Feature21(?meth),Feature17(?meth),Feature1(?meth),Feature13(?meth),Feature25(?meth),Feature15(?meth),Feature22(?meth),Feature18(?meth),
+MethodSignatureRef(?meth).
+
+VeryImportantMethod(?meth)<-
+  Feature20(?meth),Feature8(?meth),Feature5(?meth),Feature6(?meth),Feature13(?meth),Feature1(?meth),Feature11(?meth),Feature3(?meth),Feature22(?meth),Feature18(?meth),Feature15(?meth),Feature24(?meth),Feature16(?meth),
+MethodSignatureRef(?meth).
+

@@ -1,0 +1,24 @@
+--- logic/library/fact-declarations.logic	2013-01-16 07:31:46.000000000 +1100
++++ logic/library/fact-declarations.logic	2016-08-29 10:19:21.000000000 +1000
+@@ -489,3 +489,21 @@
+   MethodInvocationRef(?invocation),
+   VarRef(?to),
+   VarRef(?field).
++  
++  
++/**
++ * The string constants that would be distinguished.
++ */
++DistinctStringConstant(?heap) -> HeapAllocationRef(?heap).
++
++
++/**
++ * Heap contexts computed by BEAN.
++ */
++
++BeanHeapContext[?allocHctx, ?allocator, ?heap] = ?newHctx ->
++  HeapAllocationRef(?allocHctx),
++  HeapAllocationRef(?allocator),
++  HeapAllocationRef(?heap),
++  HeapAllocationRef(?newHctx).
++  

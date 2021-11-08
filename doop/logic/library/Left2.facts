@@ -1,0 +1,17 @@
+java.util.AbstractCollection.addAll/java.util.AbstractCollection.add/0
+
+java.util.JapaneseImperialCalendar.clone/sun.util.calendar.CalendarDate.clone/1
+<java.util.JapaneseImperialCalendar: int computeFields(int,int)>/sun.util.calendar.CalendarDate.clone/0
+
+
+java.text.RuleBasedBreakIterator$SafeCharIterator.clone/java.lang.Object.clone/0
+java.text.RuleBasedBreakIterator.clone/java.text.BreakIterator.clone/0
+org.apache.xml.dtm.ref.DTMDefaultBaseIterators$AncestorIterator.cloneIterator/java.lang.Object.clone/0
+org.apache.xml.dtm.ref.DTMDefaultBaseIterators$PrecedingIterator.cloneIterator/java.lang.Object.clone/0
+org.apache.xml.utils.NodeVector.clone/java.lang.Object.clone/0
+org.apache.xpath.axes.FilterExprWalker.clone/org.apache.xpath.axes.AxesWalker.clone/0
+org.apache.xpath.axes.OneStepIterator.clone/org.apache.xpath.axes.PredicatedNodeTest.clone/0
+
+org.apache.xpath.axes.UnionPathIterator.clone/org.apache.xpath.axes.PredicatedNodeTest.clone/0
+org.apache.xpath.axes.WalkingIterator.clone/org.apache.xpath.axes.PredicatedNodeTest.clone/0
+

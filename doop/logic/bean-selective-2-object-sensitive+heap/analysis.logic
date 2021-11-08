@@ -1,0 +1,192 @@
+/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
+ *
+ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Context-sensitive pointer analysis with context of 2 objects
+ * (AND for static calls 1 call-site).
+ * The object-sensitive contexts are computed by BEAN.
+ */
+
+#include "macros.logic"
+#include "../context-sensitive.logic"
+#include "../library.logic"
+
+// In this analysis, the real context is a pair of HeapAllocationRef AND
+// a MethodInvocationRef (for static calls) sometimes.
+// The real heap context is a single HeapAllocationRef. Keeping mapping 
+// functions is the way to handle analyses where HContext = Context 
+// (since the language considers them different types).
+// NOTE: Changed from HeapAllocationRef to CallGraphEdgeSourceRef
+// in order to use the invocation site for static calls.
+ContextFromRealContext[?heap1, ?heap2] = ?ctx ->
+  Context(?ctx), CallGraphEdgeSourceRef(?heap1), CallGraphEdgeSourceRef(?heap2).
+
+lang:skolem(`ContextFromRealContext).
+
+// NOTE: Use the following when using both the normal (caller's) context
+// and the invocation site for static calls.
+SpecialContextFromRealContext[?heap1, ?invocation, ?heap2] = ?ctx ->
+  CallGraphEdgeSourceRef(?heap1), CallGraphEdgeSourceRef(?heap2),
+  CallGraphEdgeSourceRef(?invocation), Context(?ctx). 
+
+lang:skolem(`SpecialContextFromRealContext).
+
+RealContext1FromContext[?ctx] = ?heap -> 
+  Context(?ctx), CallGraphEdgeSourceRef(?heap).
+
+RealContext2FromContext[?ctx] = ?heap -> 
+  Context(?ctx), CallGraphEdgeSourceRef(?heap).
+
+RealContext1FromContext[?ctx] = ?heap1,
+RealContext2FromContext[?ctx] = ?heap2 <- 
+  ContextFromRealContext[?heap1, ?heap2] = ?ctx.
+
+// NOTE: Use the following when using both the normal (caller's) context
+// and the invocation site for static calls.
+RealContext1FromContext[?ctx] = ?invocation,
+RealContext2FromContext[?ctx] = ?heap2 <- 
+  SpecialContextFromRealContext[_, ?invocation, ?heap2] = ?ctx.
+
+
+HeapInContext(?heap, ?ctx) ->
+  HeapAllocationRef(?heap), Context(?ctx).
+
+HeapInContext(?heap, ?ctx) <-
+  AssignNormalHeapAllocationSkolemOpt(?heap, ?ctx, _).
+
+
+#ifndef DISABLE_REFLECTION
+HeapInContext(?heap, ?ctx) <-
+  ReflectiveAssignHeapAllocation(?instruction, ?type, ?ctx, _),
+  ReflectiveHeapAllocation[?instruction, ?type]  = ?heap.
+#endif
+
+
+// ?heap1 is the real heap context of ?heap2.
+TwoHeapsFromContext(?ctx, ?heap1, ?heap2) ->
+  Context(?ctx),
+  HeapAllocationRef(?heap1),
+  HeapAllocationRef(?heap2).
+
+TwoHeapsFromContext(?ctx, ?heap1, ?heap2) <-
+  (
+   ContextFromRealContext[?heap1, ?heap2] = ?ctx;
+   SpecialContextFromRealContext[?heap1, _, ?heap2] = ?ctx
+  ),
+  HeapAllocationRef(?heap1),
+  HeapAllocationRef(?heap2).
+
+BeanHContext[?ctx, ?heap] = ?heapctx ->
+  Context(?ctx), HeapAllocationRef(?heap), CallGraphEdgeSourceRef(?heapctx).
+
+BeanHContext[?ctx, ?heap] = ?heapctx <-
+  HeapInContext(?heap, ?ctx),
+  TwoHeapsFromContext(?ctx, ?heap1, ?heap2),
+  BeanHeapContext[?heap1, ?heap2, ?heap] = ?heapctx.
+
+// Due to some special context handling of Doop, some contexts would be
+// missed by BEAN. In this case, we make Doop regress to traditional
+// object-sensitivity.
+BeanHContext[?ctx, ?heap] = ?heap2 <-
+  HeapInContext(?heap, ?ctx),
+  TwoHeapsFromContext(?ctx, ?heap1, ?heap2),
+  !BeanHeapContext[?heap1, ?heap2, ?heap] = _.
+
+// In selective 2 object-sensitivity, some contexts consist of 1 heap and
+// 2 call sites. In this case,  we make Doop regress to traditional
+// object-sensitivity.
+BeanHContext[?ctx, ?heap] = ?heap2 <-
+  HeapInContext(?heap, ?ctx),
+  SpecialContextFromRealContext[?realCtx1, _, ?heap2] = ?ctx,
+  !HeapAllocationRef(?realCtx1).
+
+
+
+HContextFromRealHContext[?heap] = ?hctx ->
+  HContext(?hctx), CallGraphEdgeSourceRef(?heap).
+
+lang:skolem(`HContextFromRealHContext).
+
+RealHContextFromHContext[?hctx] = ?heap -> 
+  HContext(?hctx), CallGraphEdgeSourceRef(?heap).
+
+RealHContextFromHContext[?hctx] = ?heap <-
+  HContextFromRealHContext[?heap] = ?hctx.
+
+// Creating special immutable heap allocation constant
+ImmutableHeapValue[] = ?immHeap <-
+  HeapAllocationValue(?immHeap, "<<immutable>>").
+
+
+// Create initial objects with their heapcontexts.
+HContextFromRealHContext[?heap] = ?hctx,
+HContext(?hctx),
+SystemThreadGroup(?hctx, ?alloc) <-
+  MySystemThreadGroup(?heap, ?alloc).
+
+HContextFromRealHContext[?heap] = ?hctx,
+HContext(?hctx),
+MainThreadGroup(?hctx, ?alloc) <-
+  MyMainThreadGroup(?heap, ?alloc).
+
+HContextFromRealHContext[?heap] = ?hctx,
+HContext(?hctx),
+MainThread(?hctx, ?alloc) <-
+  MyMainThread(?heap, ?alloc).
+
+/**
+ * Merge optimization hack
+ */
+
+// For this analysis, we only need two of the parameters that may 
+// influence the new context object.
+MyMergeBasis(?hctx, ?heap) <-
+  MergeBasis(_, _, ?hctx, ?heap).
+
+// We create new context objects sparingly, because of the high cost.
+// We also cache them, so they can be looked up without a join.
+Context(?calleeCtx),
+ContextFromRealContext[RealHContextFromHContext[?hctx],?heap] = ?calleeCtx,
+OptimizeMerge[?hctx, ?heap] = ?calleeCtx <-
+  MyMergeBasis(?hctx, ?heap).
+
+  
+/**
+ * Reachable
+ */
+ReachableContext(?ctx, ?method),
+ContextFromRealContext[?initheap,?initheap] = ?ctx,
+Context(?ctx)
+ <-
+  MainMethodDeclaration(?method),
+  HeapAllocationValue(?initheap, "<<initial-context>>").
+
+ReachableContext(?ctx, ?method),
+ContextFromRealContext[?startupheap,?startupheap] = ?ctx,
+Context(?ctx)
+ <-
+  ImplicitReachable(?method),
+  HeapAllocationValue(?startupheap, "<<jvm-startup>>").
+
+ReachableContext(?ctx, ?clinit),
+ContextFromRealContext[?clinitheap,?clinitheap] = ?ctx,
+Context(?ctx)
+ <-
+  InitializedClass(?class),
+  ClassInitializer[?class] = ?clinit,
+  HeapAllocationValue(?clinitheap, "<<class-initialization>>").

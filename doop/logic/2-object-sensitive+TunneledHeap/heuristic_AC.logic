@@ -1,0 +1,69 @@
+
+HeapToMethod[?heap] = ?method, Target(?heap)<-
+  AssignNormalHeapAllocation(?heap,_,?method).
+
+
+HeapToMethod[?heap] = ?method, Target(?heap)<-
+  AssignAuxiliaryHeapAllocation(?heap,_,?method).
+
+
+
+D2(?meth)->MethodSignatureRef(?meth).
+VeryImportantMethod(?method)->MethodSignatureRef(?method).
+
+NormalHeapMethod[?heap] = ?inmethod -> HeapAllocationRef(?heap),MethodSignatureRef(?inmethod). 
+
+NormalHeapMethod[?heap] = ?inmethod,Normal(?heap)<-
+  AssignNormalHeapAllocation(?heap, _, ?inmethod).
+
+
+MethodsCounts[?method]=?n<-
+  agg<<?n = count()>> AssignHeapAllocation(_, _, ?method).
+
+
+StaticMethodInvocation:Method[?invocation] = ?inmethod <-
+  StaticMethodInvocation:In(?invocation, ?inmethod).
+
+
+OneHeapMethods(?meth)<-
+  MethodsCounts[?meth] = ?n,
+  ?n=1.
+
+
+ManyMethodClass(?class)<-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20.
+
+
+InnerClassAlloc(?heap)<-
+  string:like(?heap,"%init%"),
+  string:like(?heap,"%HashSet%"),
+  string:like(?heap,"%new%HashMap%"),
+  AssignNormalHeapAllocation(?heap,_,_).
+
+
+InnerClassAlloc(?heap)<-
+  string:like(?heap,"%new%%$%"),
+  AssignNormalHeapAllocation(?heap,_,_).
+
+
+InitClassAlloc(?heap)<-
+  string:like(?heap,"%init%"),
+  string:like(?heap,"%HashSet%"),
+  AssignNormalHeapAllocation(?heap,_,_).
+
+
+Minseok(?heap)<-
+  InnerClassAlloc(?heap).
+
+
+Minseok(?heap)<-
+  InitClassAlloc(?heap).
+
+
+D2(?meth)<-
+  string:like(?meth,"%init%"),
+  string:like(?meth,"%HashSet%"),
+  MethodSignatureRef(?meth).
+
+

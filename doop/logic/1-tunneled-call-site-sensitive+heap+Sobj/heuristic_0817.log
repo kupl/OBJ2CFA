@@ -1,0 +1,50 @@
+ICSEInvocation1(?invocation) -> MethodInvocationRef(?invocation).
+
+ICSEInvocation(?invocation) <-
+  //MyInvocation(?invocation),
+  //!InitInStatic(?invocation),
+  //Learn(?invocation),
+  Oracle(?invocation),
+  MethodInvocationRef(?invocation).
+
+//////////////////////////////
+
+
+Learn(?invo)<-MethodInvocationRef(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature41(?invo), Feature11(?invo), Feature45(?invo), Feature19(?invo), Feature22(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature11(?invo), Feature13(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature31(?invo), Feature33(?invo), Feature34(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature3(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature44(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature35(?invo), Feature37(?invo), Feature8(?invo), Feature43(?invo), Feature45(?invo), Feature18(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature32(?invo), Feature35(?invo), Feature5(?invo), Feature43(?invo), Feature45(?invo), Feature11(?invo), Feature17(?invo), Feature19(?invo), Feature20(?invo), Feature22(?invo), Feature26(?invo), Feature29(?invo), Feature31(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature9(?invo), Feature42(?invo), Feature7(?invo), Feature45(?invo), Feature13(?invo), Feature19(?invo), Feature21(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature32(?invo), Feature35(?invo), Feature37(?invo), Feature43(?invo), Feature45(?invo), Feature14(?invo), Feature11(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature35(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo).
+Learn(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature36(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo).
+
+//Learn(?invo)<-
+//  ResearchInvo(?invo).
+
+///////////////////////////////:
+
+Oracle(?invo)<-Feature0(?invo),Feature35(?invo),Feature5(?invo),Feature43(?invo),!ScalableInvocation(?invo),Feature11(?invo),Feature17(?invo),Feature20(?invo),Feature22(?invo),Feature26(?invo),Feature29(?invo),Feature31(?invo).
+
+
+Oracle(?invo)<-Feature35(?invo),Feature5(?invo),Feature38(?invo),Feature43(?invo),!ScalableInvocation(?invo),Feature21(?invo),Feature22(?invo),Feature26(?invo),Feature29(?invo).
+
+
+
+Oracle(?invo)<-Feature0(?invo),Feature35(?invo),Feature37(?invo),Feature39(?invo),Feature9(?invo),Feature42(?invo),Feature7(?invo),!ScalableInvocation(?invo),Feature13(?invo),Feature17(?invo),Feature19(?invo),Feature21(?invo),Feature25(?invo),Feature26(?invo),Feature29(?invo),Feature5(?invo).
+
+Oracle(?invo)<-Feature0(?invo),Feature33(?invo),Feature35(?invo),Feature37(?invo),Feature39(?invo),Feature41(?invo),!ScalableInvocation(?invo),Feature22(?invo),Feature26(?invo),Feature29(?invo).
+
+Oracle(?invo)<-Feature0(?invo),Feature33(?invo),Feature34(?invo),Feature37(?invo),Feature38(?invo),Feature41(?invo),Feature43(?invo),!ScalableInvocation(?invo),Feature13(?invo),Feature22(?invo),Feature2(?invo),Feature25(?invo),Feature26(?invo),Feature29(?invo),Feature5(?invo).
+
+
+Oracle(?invo)<-Feature0(?invo),Feature2(?invo),Feature9(?invo),Feature11(?invo),Feature13(?invo),Feature19(?invo),Feature21(?invo),Feature22(?invo),Feature25(?invo),Feature26(?invo),Feature29(?invo),Feature30(?invo),Feature35(?invo),Feature36(?invo),Feature38(?invo),Feature41(?invo),Feature43(?invo),ScalableInvocation(?invo).
+
+Oracle(?invo)<-Feature0(?invo),Feature2(?invo),Feature5(?invo),Feature6(?invo),Feature9(?invo),Feature11(?invo),Feature13(?invo),Feature14(?invo),Feature17(?invo),Feature19(?invo),Feature21(?invo),Feature22(?invo),Feature25(?invo),Feature26(?invo),Feature29(?invo),Feature30(?invo),Feature32(?invo),Feature35(?invo),Feature36(?invo),Feature39(?invo),Feature41(?invo),Feature43(?invo),!ScalableInvocation(?invo).
+
+
+Oracle(?invo)<-Feature0(?invo),Feature32(?invo),Feature35(?invo),Feature37(?invo),Feature39(?invo),Feature43(?invo),!ScalableInvocation(?invo),Feature14(?invo),Feature11(?invo),Feature17(?invo),Feature21(?invo),Feature22(?invo),Feature25(?invo),Feature26(?invo),Feature29(?invo),Feature5(?invo).
+
+Oracle(?invo)<-MethodInvocationRef(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature41(?invo), Feature11(?invo), !ScalableInvocation(?invo), Feature19(?invo), Feature22(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo).
+

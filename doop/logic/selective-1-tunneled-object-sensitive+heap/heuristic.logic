@@ -1,0 +1,213 @@
+//D2(?meth)->MethodSignatureRef(?meth).
+//VeryImportantMethod(?method)->MethodSignatureRef(?method).
+
+NormalHeapMethod[?heap] = ?inmethod -> HeapAllocationRef(?heap),MethodSignatureRef(?inmethod). 
+
+NormalHeapMethod[?heap] = ?inmethod,Normal(?heap)<-
+  AssignNormalHeapAllocation(?heap, _, ?inmethod).
+
+/*
+MethodsCounts[?method]=?n<-
+  agg<<?n = count()>> AssignHeapAllocation(_, _, ?method).
+
+StaticMethodInvocation:Method[?invocation] = ?inmethod <-
+  StaticMethodInvocation:In(?invocation, ?inmethod).
+
+
+
+OneHeapMethods(?method)<-
+  MethodsCounts[?method] = ?n,
+  ?n=1.
+
+
+
+ManyMethodClass(?class)<-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20.
+
+Feature45(?meth)<-
+  ManyMethodClass(?class),
+  MethodDeclaringClass[?meth] = ?class,
+  MethodSignatureRef(?meth).
+
+
+
+
+ManyHeapMethods(?method1), Target(?method2)<- 
+  MethodSignature:Type[?method1] = ?type,
+  MethodSignature:Type[?method2] = ?type,
+  MethodsCounts[?method2] = ?n,
+  string:like(?method2,"%clinit%"),
+  ?n > 5.
+
+
+
+StaticMethods(?meth)<-
+  StaticMethodInvocation(_,?meth,_).
+
+
+
+D2(?meth)<-
+  
+  
+  string:like(?meth,"%$%:%"), //0
+
+
+  MethodSignatureRef(?meth).
+*/
+
+
+TunnelingM(?meth) -> MethodSignatureRef(?meth).
+Tunneling(?meth)<-
+  Feature20(?meth),
+  MethodSignatureRef(?meth).
+
+
+
+/*
+
+D2(?meth)<-
+  
+  
+  string:like(?meth,"%java%"), //0
+  string:notlike(?meth,"%sun%"), //5
+
+ 
+
+  !Feature45(?meth),//45
+
+
+
+  string:notlike(?meth,"%security%"), //11
+  string:notlike(?meth,"%String%"), //17
+  string:like(?meth,"%$%:%"), //20
+  Var:DeclaringMethod(_, ?meth),  //28
+
+
+
+  MethodSignatureRef(?meth).
+
+
+
+D2(?meth)<-
+  Feature45(?meth),//44
+  Var:DeclaringMethod(_, ?meth),  //28
+  !LoadArrayIndex(_,_,?meth),//25
+  string:notlike(?meth,"%security%"), //11
+  AssignLocal(_,_,?meth),//26
+  !StoreInstanceField(_, _, _, ?meth),//31
+  string:notlike(?meth,"%String%"), //17
+  string:notlike(?meth,"%sun%"), //5
+  string:notlike(?meth,"%void%"), //9
+  string:like(?meth,"%util%"),//14
+
+  !VirtualMethodInvocation(_,_,?meth),//35
+   string:like(?meth,"%lang%"), //2
+   StaticMethodInvocation(_,_,?meth),
+   string:like(?meth,"%()%"), //6
+  
+  MethodSignatureRef(?meth).
+
+
+
+D2(?meth)<-
+
+  StaticMethodInvocation(_,?meth,_),//46
+  !StoreInstanceField(_, _, _, ?meth),//31
+  string:notlike(?meth,"%security%"), //11
+  string:like(?meth,"%java%"), //0
+  Var:DeclaringMethod(_, ?meth),  //28
+  AssignLocal(_,_,?meth),//26
+  string:notlike(?meth,"%init%"),//19
+  string:notlike(?meth,"%String%"), //17
+  string:notlike(?meth,"%sun%"), //5
+  string:notlike(?meth,"%()%"), //7
+  string:like(?meth,"%util%"),//14
+  string:notlike(?meth,"%$%:%"),  //21
+  
+  MethodSignatureRef(?meth).
+
+
+
+
+
+VeryImportantMethod(?method)<-
+  string:like(?method,"%util%"), //14
+  Var:DeclaringMethod(_, ?method), //28
+  !LoadArrayIndex(_,_,?method),//25
+  string:like(?method,"%java%"), //0
+  string:notlike(?method,"%security%"), //11
+  string:notlike(?method,"%sun%"), //5
+  !StaticMethodInvocation(_,?method,_),//46
+  AssignLocal(_, _, ?method), //26
+  string:notlike(?method,"%String%"), //17
+  string:notlike(?method,"%(%Object%)%"), //41
+  string:notlike(?method,"%lang%"), //3
+  !StaticMethodInvocation(_, _, ?method), //33
+  string:notlike(?method,"%$%:%"),  //21
+  !VirtualMethodInvocation(_,_,?method),//35
+  AssignHeapAllocation(_,_,?method), //42
+  OneHeapMethods(?method),//38
+  !Feature45(?method),//45
+  StoreInstanceField(_, _, _, ?method), //30
+  string:like(?method,"%void%"),  //8
+  string:like(?method,"%init%"),  //18
+  string:like(?method,"%int%"), //12
+  string:notlike(?method,"%()%"), //7
+  
+  MethodSignatureRef(?method).
+
+
+VeryImportantMethod(?method)<-
+
+  OneHeapMethods(?method), //38
+  Var:DeclaringMethod(_, ?method), //28
+  AssignHeapAllocation(_,_,?method), //42
+  !LoadArrayIndex(_,_,?method),//25
+  AssignLocal(_, _, ?method), //26
+  !StaticMethodInvocation(_,?method,_),//46
+  string:notlike(?method,"%security%"), //11
+  string:like(?method,"%java%"), //0
+  string:notlike(?method,"%String%"), //17
+  string:notlike(?method,"%lang%"), //3
+  string:notlike(?method,"%sun%"), //5
+  !StaticMethodInvocation(_, _, ?method), //33
+  string:notlike(?method,"%$%:%"),  //21
+  string:like(?method,"%()%"), //6
+  !VirtualMethodInvocation(_,_,?method),//35
+
+  MethodSignatureRef(?method).
+
+*/
+
+/*
+D2(?meth)<-
+  Feature20(?meth),Feature28(?meth),Feature11(?meth),Feature17(?meth),Feature5(?meth),
+  MethodSignatureRef(?meth).
+
+D2(?meth)<-
+  Feature36(?meth),Feature11(?meth),Feature28(?meth),Feature0(?meth),Feature26(?meth),Feature17(?meth),Feature5(?meth),Feature31(?meth),
+  MethodSignatureRef(?meth).
+
+D2(?meth)<-
+  Feature35(?meth),Feature25(?meth),Feature28(?meth),Feature41(?meth),Feature37(?meth),Feature11(?meth),Feature39(?meth),Feature31(?meth),Feature17(?meth),Feature43(?meth),Feature33(?meth),Feature5(?meth),Feature0(?meth),Feature26(?meth),Feature23(?meth),Feature19(?meth),Feature13(?meth),Feature15(?meth),
+  MethodSignatureRef(?meth).
+
+*/
+
+/*
+
+VeryImportantMethod(?meth)<-
+  Feature38(?meth),Feature28(?meth),Feature42(?meth),Feature25(?meth),Feature26(?meth),Feature37(?meth),Feature11(?meth),Feature0(?meth),Feature17(?meth),Feature3(?meth),Feature5(?meth),Feature33(?meth),Feature21(?meth),Feature6(?meth),Feature45(?meth),
+  MethodSignatureRef(?meth).
+
+VeryImportantMethod(?meth)<-
+  Feature14(?meth),Feature28(?meth),Feature25(?meth),Feature0(?meth),Feature11(?meth),Feature5(?meth),Feature37(?meth),Feature26(?meth),Feature17(?meth),Feature41(?meth),Feature3(?meth),Feature33(?meth),Feature21(?meth),Feature35(?meth),Feature45(?meth),Feature42(?meth),Feature38(?meth),Feature8(?meth),Feature30(?meth),Feature18(?meth),Feature12(?meth),Feature7(?meth),
+  MethodSignatureRef(?meth).
+
+VeryImportantMethod(?meth)<-
+  Feature18(?meth),Feature37(?meth),Feature28(?meth),Feature25(?meth),Feature41(?meth),Feature8(?meth),Feature26(?meth),Feature33(?meth),Feature39(?meth),Feature45(?meth),Feature35(?meth),Feature15(?meth),Feature11(?meth),Feature17(?meth),Feature3(?meth),Feature13(?meth),Feature23(?meth),Feature5(?meth),Feature6(?meth),Feature21(?meth),Feature42(?meth),Feature30(?meth),Feature1(?meth),Feature7(?meth),
+  MethodSignatureRef(?meth).
+
+*/
+

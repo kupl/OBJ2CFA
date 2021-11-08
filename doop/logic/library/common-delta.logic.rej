@@ -1,0 +1,10 @@
+--- logic/library/common-delta.logic	2013-01-16 07:31:46.000000000 +1100
++++ logic/library/common-delta.logic	2016-08-29 09:40:57.000000000 +1000
+@@ -1,6 +1,7 @@
+ #include "native-delta.logic"
+ 
+ PlusHeapAllocationRef(?alloc, "<<string-constant>>", "java.lang.String").
++PlusHeapAllocationRef(?alloc, "<<string-object>>", "java.lang.String").
+ PlusHeapAllocationRef(?alloc, "<<string-buffer>>", "java.lang.StringBuffer").
+ 
+ #if defined(JRE15) || defined(JRE16)

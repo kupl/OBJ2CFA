@@ -1,0 +1,694 @@
+/**
+ * Virtual Method Invocation
+ */
+
+OptVirtualMethodInvocationBase(?invocation, ?base) -> 
+  VarRef(?base), MethodInvocationRef(?invocation).
+
+OptVirtualMethodInvocationBase(?invocation, ?base) <-
+  Reachable(?inmethod),
+  VirtualMethodInvocation:In(?invocation, ?inmethod),
+  VirtualMethodInvocation:Base[?invocation] = ?base.
+
+
+// This rule is the default logic for the majority of analyses
+#ifndef OptimizeMergeMacro
+
+#ifdef EnableSimulation 
+MergeMacroNormal(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+  !TunnelingAbstractionInvo(?invocation),
+  ThisVar[?tomethod] = ?this.
+
+MergeMacroTunnel(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+  TunnelingAbstractionInvo(?invocation),
+  ThisVar[?tomethod] = ?this.
+#else
+
+
+
+
+#ifdef MergeMacroThis
+MergeMacroThis(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+  TunnelingAbstractionInvo(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+
+MergeMacroNotThis(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+  !TunnelingAbstractionInvo(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+
+#else
+
+#ifdef MergeMacroTunnel
+TunneledInvo(?invocation),
+MergeMacroTunnel(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  Tunneling(?tomethod),
+  
+
+  ThisVar[?tomethod] = ?this.
+
+TunneledInvo(?invocation),
+MergeMacroTunnel(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  TunnelingM(?inmethod),
+  Invocation:In[?invocation] = ?inmethod, 
+
+
+  ThisVar[?tomethod] = ?this.
+
+
+
+MergeMacroNormal(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  !Tunneling(?tomethod),
+  !TunnelingM(?inmethod),
+  Invocation:In[?invocation] = ?inmethod, 
+
+  ThisVar[?tomethod] = ?this.
+
+
+#else
+
+#ifdef MergeMacroOld
+MergeMacroOld(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+  ContextMadeIn(?invocation, ?heap, ?method),
+  TunnelingM(?method),
+  Normal(?heap),
+
+
+
+  ThisVar[?tomethod] = ?this.
+
+MergeMacroNew(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  ContextMadeIn(?invocation, ?heap, ?method),
+  !TunnelingM(?method),
+  Normal(?heap),
+  !Tunneling(?tomethod),
+
+
+  ThisVar[?tomethod] = ?this.
+
+
+
+MergeMacroNew(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+  !Normal(?heap),
+  !Tunneling(?tomethod),
+
+
+  ThisVar[?tomethod] = ?this.
+
+
+
+MergeMacroOld(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  Tunneling(?tomethod),
+
+
+  ThisVar[?tomethod] = ?this.
+
+
+
+#else
+MergeMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this)
+ <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else /* there is optimized behavior available */
+
+// The optimization is as follows: the core analysis (this file) 
+// first creates all the possible bindings that the Merge logic
+// might need to create a new context. Then each individual analysis
+// creates new context objects carefully by invoking the skolem
+// functions as rarely as possible.
+
+MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+//  !MyTargetVar(?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base).
+/*
+MergeBasisMacroThis(?callerCtx, ?invocation, ?hctx, ?heap) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  MyTargetVar(?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base).
+*/
+
+#ifdef OptimizeMergeMacroThis
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  ThisVar[?tomethod] = ?this.
+  //SiteShouldNotBeRefined(?heap,?invocation).
+
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacroThis(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeMacroThis(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+
+
+  ThisVar[?tomethod] = ?this.
+  //SiteShouldNotBeRefined(?heap,?invocation).
+
+
+
+#else
+
+// Finally, the step of the core analysis that should be creating the
+// new objects is merely looking up the previously created context
+// objects.
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+  //SiteShouldNotBeRefined(?heap,?invocation).
+
+#endif
+
+
+#endif /* #ifndef OptimizeMergeMacro */
+
+
+#ifdef MergeRefinedMacro
+#ifndef OptimizeMergeRefinedMacro
+// Default, unoptimized behavior
+/**
+ * This logic applies to refinement-based (or "adaptive") analyses. The 
+ * analysis is first run with the filter predicate (SiteToRefine) empty, 
+ * performing a low-precision but cheap computation. Then the external logic
+ * runs delta rules to populate the filter predicate and re-runs the analysis.
+ * (Note that the #ifdef just checks if the analysis has defined the
+ * appropriate macro. This is not an input flag.)
+ */
+MergeRefinedMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base),
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+  //,  SiteShouldBeRefined(?heap,?invocation).
+
+#else /* there is optimized behavior available */
+
+MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptVirtualMethodInvocationBase(?invocation, ?base).
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeRefinedMacro(?callerCtx, ?invocation, ?hctx, ?heap), 
+  HeapAllocation:Type[?heap] = ?heaptype,
+  VirtualMethodInvocation:SimpleName[?invocation] = ?simplename,
+  VirtualMethodInvocation:Descriptor[?invocation] = ?descriptor,
+  MethodLookup[?simplename, ?descriptor, ?heaptype] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+//,SiteShouldBeRefined(?heap,?invocation).
+#endif /* #ifndef OptimizeMergeMacro */
+#endif /* #ifdef MergeRefinedMacro */
+
+/**
+ * Special method invocations. Optimized much like virtual methods.
+ */
+
+OptSpecialMethodInvocationBase(?invocation, ?base) -> 
+  VarRef(?base), MethodInvocationRef(?invocation).
+
+OptSpecialMethodInvocationBase(?invocation, ?base) <-
+  Reachable(?inmethod),
+  SpecialMethodInvocation:In(?invocation, ?inmethod),
+  SpecialMethodInvocation:Base[?invocation] = ?base.
+
+#ifndef OptimizeMergeMacro
+// Default, unoptimized behavior
+
+#ifdef EnableSimulation 
+
+MergeMacroNormal(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+  !TunnelingAbstractionInvo(?invocation),
+  ThisVar[?tomethod] = ?this.
+
+MergeMacroTunnel(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+  TunnelingAbstractionInvo(?invocation),
+  ThisVar[?tomethod] = ?this.
+
+#else
+
+
+#ifdef MergeMacroInvo
+
+
+MergeMacroInvo(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  !FromCaller(?invocation),
+  !FromHctx(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+
+
+MergeMacroCaller(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  FromCaller(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+
+
+MergeMacroHctx(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  !FromCaller(?invocation),
+  FromHctx(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+
+
+#else
+
+#ifdef MergeMacroThis
+MergeMacroThis(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  TunnelingAbstractionInvo(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+
+
+
+MergeMacroNotThis(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  !TunnelingAbstractionInvo(?invocation),
+
+  ThisVar[?tomethod] = ?this.
+#else
+
+#ifdef MergeMacroTunnel
+TunneledInvo(?invocation),
+MergeMacroTunnel(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+
+  Tunneling(?tomethod),
+
+  ThisVar[?tomethod] = ?this.
+
+TunneledInvo(?invocation),
+MergeMacroTunnel(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+
+  TunnelingM(?inmethod),
+  Invocation:In[?invocation] = ?inmethod, 
+
+  ThisVar[?tomethod] = ?this.
+
+
+
+
+MergeMacroNormal(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  !TunnelingM(?inmethod),
+  !Tunneling(?tomethod),
+  Invocation:In[?invocation] = ?inmethod, 
+
+  ThisVar[?tomethod] = ?this.
+
+#else
+
+
+#ifdef MergeMacroOld
+MergeMacroOld(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+
+  ContextMadeIn(?invocation, ?heap, ?method),
+  TunnelingM(?method),
+  Normal(?heap),
+
+
+  ThisVar[?tomethod] = ?this.
+
+MergeMacroNew(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+
+
+  ContextMadeIn(?invocation, ?heap, ?method),
+  !TunnelingM(?method),
+  Normal(?heap),
+  !Tunneling(?tomethod),
+  
+
+  ThisVar[?tomethod] = ?this.
+
+
+MergeMacroNew(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+ 
+  !Normal(?heap),
+  !Tunneling(?tomethod),
+
+
+  ThisVar[?tomethod] = ?this.
+
+
+MergeMacroOld(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  Tunneling(?tomethod),
+
+  ThisVar[?tomethod] = ?this.
+
+#else
+
+MergeMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap,  ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  ThisVar[?tomethod] = ?this.
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else /* there is optimized behavior available */
+/*
+MergeBasisMacroThis(?callerCtx, ?invocation, ?hctx, ?heap) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  MyTargetVar(?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base).
+*/
+
+MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+//  !MyTargetVar(?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base).
+
+
+#ifdef OptmizeMergeMacroThis
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+
+  
+  ThisVar[?tomethod] = ?this.
+  //SiteShouldNotBeRefined(?heap,?invocation).
+
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacroThis(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeMacroThis(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+  
+  
+  ThisVar[?tomethod] = ?this.
+  //SiteShouldNotBeRefined(?heap,?invocation).
+
+#else
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+//  SiteShouldNotBeRefined(?heap,?invocation).
+
+
+#endif
+
+
+#endif /* #ifndef OptimizeMergeMacro */
+
+#ifdef MergeRefinedMacro
+#ifndef OptimizeMergeRefinedMacro
+// Default, unoptimized behavior
+MergeRefinedMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base),
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+//  SiteShouldBeRefined(?heap,?invocation).
+
+#else /* there is optimized behavior available */
+
+MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap) <-
+  VarPointsTo(?hctx, ?heap, ?callerCtx, ?base),
+  OptSpecialMethodInvocationBase(?invocation, ?base).
+
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod),
+VarPointsTo(?hctx, ?heap, ?calleeCtx, ?this) <-
+  MergeBasisMacro(?callerCtx, ?invocation, ?hctx, ?heap),
+  OptimizeMergeRefinedMacro(?callerCtx, ?invocation, ?hctx, ?heap, ?calleeCtx), 
+  SpecialMethodInvocation:Signature[?invocation] = ?signature,
+  MethodDeclaration[?signature] = ?tomethod,
+  ThisVar[?tomethod] = ?this.
+  //SiteShouldBeRefined(?heap,?invocation).
+#endif /* #ifndef OptimizeMergeMacro */
+#endif /* #ifdef MergeRefinedMacro */
+
+
+

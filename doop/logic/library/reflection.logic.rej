@@ -1,0 +1,10 @@
+--- logic/library/reflection.logic	2013-01-16 07:31:46.000000000 +1100
++++ logic/library/reflection.logic	2016-08-29 10:08:22.000000000 +1000
+@@ -118,6 +118,7 @@
+ //YANNIS (REVIEW): needs optimization. Create opt predicate computed
+ //from first three below, but reordering the ?param, ?invocation
+ //so that VarPointsTo can also index it efficiently.
++ReflectionStringConstant(?constant),
+ ReflectiveAssignClassConstant(?ctx, ?invocation, ?type) <-
+   java:lang:Class:forName(?invocation, ?inmethod),
+   ReachableContext(?ctx, ?inmethod),                         // recursive

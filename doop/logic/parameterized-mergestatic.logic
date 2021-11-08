@@ -1,0 +1,129 @@
+Invocation:In[?invocation] = ?method<-
+  SpecialMethodInvocation:In(?invocation,?method).
+
+Invocation:In[?invocation] = ?method<-
+  VirtualMethodInvocation:In(?invocation,?method).
+
+Invocation:In[?invocation] = ?method<-
+  StaticMethodInvocation:In(?invocation,?method).
+
+Invocation:Base[?invocation] = ?base<-
+  VirtualMethodInvocation:Base[?invocation] = ?base.
+
+Invocation:Base[?invocation] = ?base<-
+  SpecialMethodInvocation:Base[?invocation] = ?base.
+
+/**
+ * Static method invocations
+ */
+
+// Again, breaking up the rule minimizes skolem creation cost!
+StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod) ->
+  Context(?callerCtx), CallGraphEdgeSourceRef(?invocation), 
+  MethodSignatureRef(?tomethod).
+
+StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod) <-
+  ReachableContext(?callerCtx, ?inmethod),
+  StaticMethodInvocation(?invocation, ?signature, ?inmethod),
+  MethodDeclaration[?signature] = ?tomethod.
+
+#ifdef EnableSimulation 
+
+MergeStaticMacroNormal(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  !TunnelingAbstractionInvo(?invocation),
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+MergeStaticMacroTunnel(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  TunnelingAbstractionInvo(?invocation),
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+#else
+
+#ifdef MergeStaticMacroThis
+
+//TargetMethod(?tomethod),ImportantCtx(?callerCtx),
+MergeStaticMacroThis(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  TunnelingAbstractionInvo(?invocation),
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+MergeStaticMacroNotThis(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  !TunnelingAbstractionInvo(?invocation),
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+#else
+#ifdef MergeStaticMacroOld
+
+MergeStaticMacroOld(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  !Tunneling(?tomethod),
+  TunnelingM(?method),
+  StaticMethodInvocation:Method[?invocation]=?method,
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+
+MergeStaticMacroNew(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  !Tunneling(?tomethod),
+  !TunnelingM(?method),
+  StaticMethodInvocation:Method[?invocation]=?method,
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+MergeStaticMacroOld(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+  Tunneling(?tomethod),
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+
+#else
+#ifdef MergeStaticMacroTunnel
+
+MergeStaticMacroTunnel(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+
+  Tunneling(?tomethod),
+
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+
+
+MergeStaticMacroTunnel(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+
+  TunnelingM(?inmethod),
+  Invocation:In[?invocation] = ?inmethod, 
+    
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+
+
+MergeStaticMacroNormal(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+ 
+  !TunnelingM(?inmethod),
+  Invocation:In[?invocation] = ?inmethod, 
+  !Tunneling(?tomethod),
+
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+#else
+
+MergeStaticMacro(?callerCtx, ?invocation, ?calleeCtx),
+CallGraphEdge(?callerCtx, ?invocation, ?calleeCtx, ?tomethod) <-
+
+
+  StaticMethodInvocationSkolemOpt(?callerCtx, ?invocation, ?tomethod).
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+
+

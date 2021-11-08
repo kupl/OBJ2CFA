@@ -1,0 +1,64 @@
+Tunneling(?meth)->MethodSignatureRef(?meth).
+TunnelingM(?method)->MethodSignatureRef(?method).
+
+NormalHeapMethod[?heap] = ?inmethod -> HeapAllocationRef(?heap),MethodSignatureRef(?inmethod). 
+
+NormalHeapMethod[?heap] = ?inmethod,Normal(?heap)<-
+  AssignNormalHeapAllocation(?heap, _, ?inmethod).
+
+
+MethodsCounts[?method]=?n<-
+  agg<<?n = count()>> AssignHeapAllocation(_, _, ?method).
+
+StaticMethodInvocation:Method[?invocation] = ?inmethod <-
+  StaticMethodInvocation:In(?invocation, ?inmethod).
+
+
+OneHeapMethods(?meth)<-
+  MethodsCounts[?meth] = ?n,
+  ?n=1.
+
+ManyMethodClass(?class)<-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20.
+
+
+
+Tunneling(?meth)<-
+  Feature20(?meth),Feature28(?meth),Feature37(?meth),Feature26(?meth),Feature11(?meth),Feature17(?meth),Feature0(?meth),Feature5(?meth),
+MethodSignatureRef(?meth).
+
+
+Tunneling(?meth)<-
+  Feature22(?meth),Feature28(?meth),Feature25(?meth),Feature26(?meth),Feature0(?meth),Feature37(?meth),Feature39(?meth),Feature41(?meth),Feature7(?meth),Feature15(?meth),Feature13(?meth),Feature8(?meth),Feature34(?meth),Feature2(?meth),Feature18(?meth),Feature42(?meth),Feature44(?meth),Feature32(?meth),Feature30(?meth),Feature21(?meth),Feature16(?meth),Feature4(?meth),Feature10(?meth),
+MethodSignatureRef(?meth).
+
+
+
+TunnelingM(?meth)<-
+  Feature30(?meth),Feature28(?meth),Feature26(?meth),Feature37(?meth),Feature41(?meth),Feature25(?meth),Feature8(?meth),Feature7(?meth),Feature15(?meth),Feature11(?meth),Feature33(?meth),Feature17(?meth),Feature3(?meth),Feature13(?meth),Feature23(?meth),Feature5(?meth),Feature21(?meth),Feature42(?meth),Feature38(?meth),Feature45(?meth),Feature18(?meth),Feature35(?meth),
+MethodSignatureRef(?meth).
+
+
+TunnelingM(?meth)<-
+  Feature6(?meth),Feature41(?meth),Feature23(?meth),Feature28(?meth),Feature25(?meth),Feature37(?meth),Feature31(?meth),Feature17(?meth),Feature3(?meth),Feature33(?meth),Feature11(?meth),Feature26(?meth),Feature19(?meth),Feature9(?meth),Feature21(?meth),Feature5(?meth),Feature0(?meth),Feature13(?meth),Feature35(?meth),Feature45(?meth),Feature38(?meth),
+MethodSignatureRef(?meth).
+
+TunnelingM(?meth)<-
+  Feature22(?meth),Feature7(?meth),Feature28(?meth),Feature25(?meth),Feature26(?meth),Feature41(?meth),Feature11(?meth),Feature0(?meth),Feature37(?meth),Feature21(?meth),Feature33(?meth),Feature5(?meth),Feature17(?meth),Feature3(?meth),Feature12(?meth),Feature8(?meth),Feature35(?meth),Feature45(?meth),Feature18(?meth),Feature42(?meth),Feature38(?meth),Feature30(?meth),Feature14(?meth),
+MethodSignatureRef(?meth).
+
+TunnelingM(?meth)<-
+  Feature40(?meth),Feature28(?meth),Feature0(?meth),Feature7(?meth),Feature25(?meth),Feature19(?meth),Feature11(?meth),Feature31(?meth),Feature2(?meth),Feature33(?meth),Feature26(?meth),Feature13(?meth),Feature21(?meth),Feature9(?meth),Feature23(?meth),Feature5(?meth),Feature44(?meth),Feature35(?meth),Feature14(?meth),
+MethodSignatureRef(?meth).
+
+
+
+
+
+
+
+
+
+
+

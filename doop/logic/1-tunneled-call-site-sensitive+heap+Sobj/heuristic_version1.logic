@@ -1,0 +1,192 @@
+ICSEInvocation1(?invocation) -> MethodInvocationRef(?invocation).
+
+ICSEInvocation(?invocation) <-
+  //MyInvocation(?invocation),
+  //ICSEInvocation1(?invocation),
+  LearnInvocation(?invocation),
+  MethodInvocationRef(?invocation).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature36(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo)//, Feature48(?invo)
+.
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature33(?invo), Feature2(?invo), Feature5(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature24(?invo), Feature34(?invo), Feature13(?invo), //Feature49(?invo), 
+Feature22(?invo), Feature45(?invo), Feature26(?invo), Feature47(?invo), Feature28(?invo), Feature37(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature47(?invo), //Feature49(?invo), 
+Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature35(?invo), Feature5(?invo), //Feature49(?invo),
+Feature43(?invo), Feature47(?invo), Feature11(?invo), Feature17(?invo), Feature20(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature31(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature32(?invo), Feature35(?invo), Feature17(?invo), Feature5(?invo), Feature39(?invo), Feature11(?invo), Feature45(?invo), Feature14(?invo), Feature47(?invo), Feature43(?invo), Feature21(?invo), Feature22(?invo), Feature24(?invo), //Feature49(?invo), 
+Feature28(?invo), Feature26(?invo), Feature37(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature35(?invo), Feature17(?invo), Feature5(?invo), Feature7(?invo), Feature9(?invo), Feature42(?invo), Feature39(?invo), Feature13(?invo), Feature45(?invo), //Feature49(?invo), 
+Feature19(?invo), Feature21(?invo), Feature24(?invo), Feature26(?invo), Feature47(?invo), Feature28(?invo), Feature37(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature36(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo)//, Feature49(?invo)
+.
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature43(?invo), Feature47(?invo), //Feature49(?invo), 
+Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo).
+
+
+/*
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature47(?invo), 
+//Feature49(?invo), 
+//!DirectPassInvo(?invo),
+Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature5(?invo), Feature11(?invo), Feature14(?invo), Feature17(?invo), Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature32(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo). 
+//!DirectPassInvo(?invo).
+//Feature49(?invo).
+
+//LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature30(?invo), Feature35(?invo), Feature36(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo). 
+//DirectPassInvo(?invo).
+//Feature48(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature5(?invo), Feature7(?invo), Feature9(?invo), Feature13(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature42(?invo), Feature45(?invo), Feature47(?invo). 
+//!DirectPassInvo(?invo).
+//Feature49(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature35(?invo), Feature5(?invo), 
+//!DirectPassInvo(?invo),
+//Feature49(?invo), 
+Feature43(?invo), Feature47(?invo), Feature11(?invo), Feature17(?invo), Feature20(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature31(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature13(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature33(?invo), Feature34(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo). 
+//!DirectPassInvo(?invo).
+//Feature49(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature36(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo).
+//Feature49(?invo).
+//!DirectPassInvo(?invo).
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature35(?invo), Feature38(?invo), Feature43(?invo), Feature47(?invo), 
+//Feature49(?invo), 
+//!DirectPassInvo(?invo),
+Feature21(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo), Feature28(?invo).
+*/
+
+
+///*fucked feature is changed
+//LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature5(?invo), Feature11(?invo), Feature21(?invo), Feature22(?invo), Feature26(?invo), Feature38(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), !ScalableInvocation(?invo).
+//InitThisVoid -> ScalableInvocation , 
+//Feature41 = !FreshCall is out!
+//Feature35 = Protected  is out!
+//Feature29  is out!
+//Feature37  is out!
+//Feature53  is out!
+
+//LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature35(?invo), Feature5(?invo), Feature11(?invo), Feature14(?invo), Feature47(?invo), Feature49(?invo), !ScalableInvocation(?invo), Feature22(?invo), Feature24(?invo), Feature26(?invo).
+//InitThisVoid -> ScalableInvocation
+
+/*
+InitThisVoid(?invo)<-
+  string:like(?sig2,"%<init>%"),
+  SpecialMethodInvocation:Signature[?invo2] = ?sig2,
+  ActualParam[_,?invo2] = ?base,
+  //ThisBase(?base),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+  //string:like(?sig,"%void%()%"),
+  //SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+InitThisVoid(?invo)<-
+  string:like(?sig2,"%<init>%"),
+  SpecialMethodInvocation:Signature[?invo2] = ?sig2,
+  ActualParam[_,?invo2] = ?base,
+  //ThisBase(?base),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+  //string:like(?sig,"%void%()%"),
+  //SpecialMethodInvocation:Signature[?invo] = ?sig.
+*/
+
+
+
+/*
+//ICSEinvo1(?invo) <-
+//Feature24(?invo).
+ICSEInvocation1(?invocation), C1(?invocation) <-
+  //Feature28(?invocation),//No Alloc
+  Feature2(?invocation),
+  Feature13(?invocation),
+  Feature25(?invocation),//NoArr
+  Feature29(?invocation),//NoStore
+  
+  //!InitThisVoid(?invocation),
+  Feature51(?invocation),//NoScalable
+  Feature21(?invocation),//New one
+  
+  Feature41(?invocation),//NoFresh
+  
+  Feature26(?invocation),//Var
+  Feature22(?invocation),//Local
+  Feature11(?invocation),
+  Feature5(?invocation),
+  Feature0(?invocation),
+  Feature15(?invocation),
+  Feature33(?invocation).//No alloc
+
+
+ICSEInvocation1(?invocation), C2(?invocation) <-
+  Feature26(?invocation), 
+  Feature22(?invocation),
+  Feature51(?invocation),
+  //!BaseAndParam(?invocation),
+  //!VoidThis(?invocation),
+
+  Feature41(?invocation),
+  
+  Feature38(?invocation), //This
+  MethodInvocationRef(?invocation).
+
+
+
+ICSEInvocation1(?invo)<-
+  //MethodInvocationRef(?invo), 
+  //Feature49(?invo), 
+  Feature47(?invo), 
+  Feature45(?invo), //NoMulticall
+  
+  //!InitThisVoid(?invo),
+  Feature51(?invo), 
+   
+  Feature35(?invo), 
+  
+  Feature26(?invo),
+  Feature22(?invo), 
+
+  Feature17(?invo),
+  Feature11(?invo),
+  Feature5(?invo),
+  Feature0(?invo),
+  
+  Feature14(?invo).
+
+//ICSEInvocation1(?invocation), C3(?invocation) <-
+//  Feature49(?invocation), //NoCombined
+//  Feature47(?invocation), //NoStaticFieldcall
+//  Feature45(?invocation), //NoMulticall
+//  Feature51(?invocation), //NotScalable
+  
+//  Feature35(?invocation),//No protected
+
+//  Feature26(?invocation),//NoVar
+//  Feature22(?invocation),//NoLocal
+//  Feature17(?invocation),
+//  Feature11(?invocation),
+//  Feature5(?invocation),
+//  Feature0(?invocation),
+//  Feature14(?invocation).//util
+
+
+ICSEInvocation1(?invocation), C4(?invocation) <-  //Fixed
+  Feature0(?invocation),
+  Feature5(?invocation),
+  Feature11(?invocation),
+  Feature17(?invocation),
+  Feature14(?invocation),//util
+  Feature41(?invocation),//FreshCall
+  Feature42(?invocation).//StaticCall
+*/
+

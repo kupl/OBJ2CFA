@@ -1,0 +1,99 @@
+/**
+ * Context-sensitive pointer analysis with context of 1 object and a
+ * context-sensitive heap abstraction.
+ *
+ * @author Martin Bravenboer
+ * @author Yannis Smaragdakis
+ */
+
+#include "macros.logic"
+#include "feat_AC.logic"
+#include "heuristic_AC.logic"
+#include "../context-sensitive.logic"
+#include "../library.logic"
+
+// In this analysis, both the real context and the real heap context 
+// are HeapAllocationRefs. Keeping mapping 
+// functions is the way to handle analyses where HContext = Context 
+// (since the language considers them different types).
+ContextFromRealContext[?heap] = ?ctx ->
+  Context(?ctx), HeapAllocationRef(?heap).
+lang:skolem(`ContextFromRealContext).
+
+RealContextFromContext[?ctx] = ?heap -> 
+  Context(?ctx), HeapAllocationRef(?heap).
+
+RealContextFromContext[?ctx] = ?heap <-
+  ContextFromRealContext[?heap] = ?ctx.
+
+RealHContextFromHContext[?hctx] = ?heap ->
+  HContext(?hctx), HeapAllocationRef(?heap).
+
+RealHContextFromHContext[?hctx] = ?heap <-
+  HContextFromRealHContext[?heap] = ?hctx.
+
+
+HContextFromRealHContext[?heap] = ?hctx ->
+  HContext(?hctx), HeapAllocationRef(?heap).
+lang:skolem(`HContextFromRealHContext).
+
+// Creating special immutable heap allocation constant
+ImmutableHeapValue[] = ?immHeap <-
+  HeapAllocationValue(?immHeap, "<<immutable>>").
+  
+
+// Create initial objects with their heapcontexts.
+HContextFromRealHContext[?heap] = ?hctx,
+HContext(?hctx),
+SystemThreadGroup(?hctx, ?alloc) <-
+  MySystemThreadGroup(?heap, ?alloc).
+
+HContextFromRealHContext[?heap] = ?hctx,
+HContext(?hctx),
+MainThreadGroup(?hctx, ?alloc) <-
+  MyMainThreadGroup(?heap, ?alloc).
+
+HContextFromRealHContext[?heap] = ?hctx,
+HContext(?hctx),
+MainThread(?hctx, ?alloc) <-
+  MyMainThread(?heap, ?alloc).
+  
+/**
+ * Reachable
+ */
+ReachableContext(?ctx, ?method),
+InitialMethod(?method),
+ContextFromRealContext[?heap] = ?ctx,
+Context(?ctx)
+ <-
+  MainMethodDeclaration(?method),
+#ifdef PADDLE_COMPAT
+  HeapAllocationValue(?heap, "<<no-context>>").
+#else
+  HeapAllocationValue(?heap, "<<initial-context>>").
+#endif
+
+ReachableContext(?ctx, ?method),
+InitialMethod(?method),
+ContextFromRealContext[?heap] = ?ctx,
+Context(?ctx)
+ <-
+  ImplicitReachable(?method),
+#ifdef PADDLE_COMPAT
+  HeapAllocationValue(?heap, "<<no-context>>").
+#else
+  HeapAllocationValue(?heap, "<<jvm-startup>>").
+#endif
+
+ReachableContext(?ctx, ?clinit),
+InitialMethod(?clinit),
+ContextFromRealContext[?heap] = ?ctx,
+Context(?ctx)
+ <-
+  InitializedClass(?class),
+  ClassInitializer[?class] = ?clinit,
+#ifdef PADDLE_COMPAT
+  HeapAllocationValue(?heap, "<<no-context>>").
+#else
+  HeapAllocationValue(?heap, "<<class-initialization>>").
+#endif

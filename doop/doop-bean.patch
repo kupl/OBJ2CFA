@@ -1,0 +1,961 @@
+Binary files doop-r160113-bin/bean.jar and doop-bean/bean.jar differ
+diff -urN doop-r160113-bin/logic/bean-2-object-sensitive+heap/analysis.logic doop-bean/logic/bean-2-object-sensitive+heap/analysis.logic
+--- doop-r160113-bin/logic/bean-2-object-sensitive+heap/analysis.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-2-object-sensitive+heap/analysis.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,146 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++/**
++ * Context-sensitive pointer analysis with context of 1 object and a
++ * context-sensitive heap abstraction. The heap contexts are computed
++ * by BEAN.
++ *
++ */
++
++#include "macros.logic"
++#include "../context-sensitive.logic"
++#include "../library.logic"
++
++// In this analysis, the real context is a pair of HeapAllocationRefs
++// and the real heap context a single HeapAllocationRef. Keeping mapping 
++// functions is the way to handle analyses where HContext = Context 
++// (since the language considers them different types).
++ContextFromRealContext[?heap1, ?heap2] = ?ctx ->
++  Context(?ctx), HeapAllocationRef(?heap1), HeapAllocationRef(?heap2).
++lang:skolem(`ContextFromRealContext).
++RealContext1FromContext[?ctx] = ?heap -> 
++  Context(?ctx), HeapAllocationRef(?heap).
++RealContext2FromContext[?ctx] = ?heap -> 
++  Context(?ctx), HeapAllocationRef(?heap).
++
++RealContext1FromContext[?ctx] = ?heap1,
++RealContext2FromContext[?ctx] = ?heap2 <- 
++  ContextFromRealContext[?heap1, ?heap2] = ?ctx.
++
++HeapInContext(?heap, ?ctx) ->
++  HeapAllocationRef(?heap), Context(?ctx).
++
++HeapInContext(?heap, ?ctx) <-
++  AssignNormalHeapAllocationSkolemOpt(?heap, ?ctx, _).
++
++#ifndef DISABLE_REFLECTION
++HeapInContext(?heap, ?ctx) <-
++  ReflectiveAssignHeapAllocation(?instruction, ?type, ?ctx, _),
++  ReflectiveHeapAllocation[?instruction, ?type]  = ?heap.
++#endif
++
++
++BeanHContext[?ctx, ?heap] = ?heapctx ->
++  Context(?ctx), HeapAllocationRef(?heap), HeapAllocationRef(?heapctx).
++
++BeanHContext[?ctx, ?heap] = ?heapctx <-
++  HeapInContext(?heap, ?ctx),
++  ContextFromRealContext[?heap1, ?heap2] = ?ctx,
++  BeanHeapContext[?heap1, ?heap2, ?heap] = ?heapctx.
++
++// Due to some special context handling of Doop, some contexts would be
++// missed by BEAN. In this case, we make Doop regress to traditional
++// object-sensitivity.
++BeanHContext[?ctx, ?heap] = ?heap2 <-
++  HeapInContext(?heap, ?ctx),
++  ContextFromRealContext[?heap1, ?heap2] = ?ctx,
++  !BeanHeapContext[?heap1, ?heap2, ?heap] = _.
++
++
++HContextFromRealHContext[?heap] = ?hctx ->
++  HContext(?hctx), HeapAllocationRef(?heap).
++lang:skolem(`HContextFromRealHContext).
++RealHContextFromHContext[?hctx] = ?heap -> 
++  HContext(?hctx), HeapAllocationRef(?heap).
++
++RealHContextFromHContext[?hctx] = ?heap <-
++  HContextFromRealHContext[?heap] = ?hctx.
++
++// Creating special immutable heap allocation constant
++ImmutableHeapValue[] = ?immHeap <-
++  HeapAllocationValue(?immHeap, "<<immutable>>").
++
++
++// Create initial objects with their heapcontexts.
++HContextFromRealHContext[?heap] = ?hctx,
++HContext(?hctx),
++SystemThreadGroup(?hctx, ?alloc) <-
++  MySystemThreadGroup(?heap, ?alloc).
++
++HContextFromRealHContext[?heap] = ?hctx,
++HContext(?hctx),
++MainThreadGroup(?hctx, ?alloc) <-
++  MyMainThreadGroup(?heap, ?alloc).
++
++HContextFromRealHContext[?heap] = ?hctx,
++HContext(?hctx),
++MainThread(?hctx, ?alloc) <-
++  MyMainThread(?heap, ?alloc).
++
++/**
++ * Merge optimization hack
++ */
++
++// For this analysis, we only need two of the parameters that may 
++// influence the new context object.
++MyMergeBasis(?hctx, ?heap) <-
++  MergeBasis(_, _, ?hctx, ?heap).
++
++// We create new context objects sparingly, because of the high cost.
++// We also cache them, so they can be looked up without a join.
++Context(?calleeCtx),
++ContextFromRealContext[RealHContextFromHContext[?hctx],?heap] = ?calleeCtx,
++OptimizeMerge[?hctx, ?heap] = ?calleeCtx <-
++  MyMergeBasis(?hctx, ?heap).
++
++  
++/**
++ * Reachable
++ */
++ReachableContext(?ctx, ?method),
++ContextFromRealContext[?initheap,?initheap] = ?ctx,
++Context(?ctx)
++ <-
++  MainMethodDeclaration(?method),
++  HeapAllocationValue(?initheap, "<<initial-context>>").
++
++ReachableContext(?ctx, ?method),
++ContextFromRealContext[?startupheap,?startupheap] = ?ctx,
++Context(?ctx)
++ <-
++  ImplicitReachable(?method),
++  HeapAllocationValue(?startupheap, "<<jvm-startup>>").
++
++ReachableContext(?ctx, ?clinit),
++ContextFromRealContext[?clinitheap,?clinitheap] = ?ctx,
++Context(?ctx)
++ <-
++  InitializedClass(?class),
++  ClassInitializer[?class] = ?clinit,
++  HeapAllocationValue(?clinitheap, "<<class-initialization>>").
+diff -urN doop-r160113-bin/logic/bean-2-object-sensitive+heap/declarations.logic doop-bean/logic/bean-2-object-sensitive+heap/declarations.logic
+--- doop-r160113-bin/logic/bean-2-object-sensitive+heap/declarations.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-2-object-sensitive+heap/declarations.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,31 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "macros.logic"
++#include "../context-sensitive-declarations.logic"
++
++// For this analysis, contexts are heap objects, so this is
++// what the initial system objects should have.
++MySystemThreadGroup(?heap, ?alloc) ->
++  HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
++
++MyMainThreadGroup(?heap, ?alloc) ->
++  HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
++
++MyMainThread(?heap, ?alloc) ->
++  HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
+diff -urN doop-r160113-bin/logic/bean-2-object-sensitive+heap/delta.logic doop-bean/logic/bean-2-object-sensitive+heap/delta.logic
+--- doop-r160113-bin/logic/bean-2-object-sensitive+heap/delta.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-2-object-sensitive+heap/delta.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,47 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "macros.logic"
++#include "../library/common-delta.logic"
++
++/**
++ * Special calling contexts
++ *
++ * Note: the type is necessary (java.lang.String), but never used. It
++ * could be anything. It also needs to be an existing type, otherwise
++ * the sanity checks will barf.
++ */
++PlusHeapAllocationRef(?heap, "<<initial-context>>", "java.lang.String").
++PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String").
++PlusHeapAllocationRef(?heap, "<<class-initialization>>", "java.lang.String").
++PlusHeapAllocationRef(?heap, "<<immutable>>", "java.lang.String").
++
++/**
++ * Special objects
++ */
+++MySystemThreadGroup(?heap, ?alloc),
++  PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String"),
++  PlusHeapAllocationRef(?alloc, "<<system-thread-group>>", "java.lang.ThreadGroup").
++
+++MyMainThreadGroup(?heap, ?alloc),
++  PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String"),
++  PlusHeapAllocationRef(?alloc, "<<main-thread-group>>", "java.lang.ThreadGroup").
++
+++MyMainThread(?heap, ?alloc),
++  PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String"),
++  PlusHeapAllocationRef(?alloc, "<<main-thread>>", "java.lang.Thread").
+diff -urN doop-r160113-bin/logic/bean-2-object-sensitive+heap/macros.logic doop-bean/logic/bean-2-object-sensitive+heap/macros.logic
+--- doop-r160113-bin/logic/bean-2-object-sensitive+heap/macros.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-2-object-sensitive+heap/macros.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,75 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "../library/fact-macros.logic"
++
++// For this analysis, every heap context recorded on allocation
++// corresponds to the most significant element of the calling 
++// context of the allocator method.
++#define RecordMacro(ctx, heap, hctx) \
++  HContext(hctx), \
++  HContextFromRealHContext[BeanHContext[ctx, heap]] = hctx
++
++#define RecordImmutableMacro(ctx, heap, immCtx) \
++  HContext(immCtx), \
++  HContextFromRealHContext[ImmutableHeapValue[]] = immCtx
++
++
++// For this analysis the context of a method call corresponds to the
++// identity of the receiver object and the receiver object of the caller.
++// Again, this may trigger creation of a new object.
++#define MergeMacro(callerCtx, invocation, hctx, heap, calleeCtx) \
++  Context(calleeCtx), \
++  ContextFromRealContext[RealHContextFromHContext[hctx], heap] = calleeCtx
++
++#define MergeBasisMacro(callerCtx, invocation, hctx, heap) \
++  MergeBasis(callerCtx, invocation, hctx, heap)
++
++#define OptimizeMergeMacro(callerCtx, invocation, hctx, heap, calleeCtx) \
++  OptimizeMerge[hctx, heap] = calleeCtx
++
++// For this analysis, static calls just keep the same context as the
++// caller. *Not* creating a new one, but pretending to, nonetheless,
++// so the engine doesn't barf.
++#define MergeStaticMacro(callerCtx, invocation, calleeCtx) \
++  Context(calleeCtx), \
++  ContextFromRealContext[RealContext1FromContext[callerCtx], \
++                         RealContext2FromContext[callerCtx]] = calleeCtx
++
++// MergeThreadStart, MergeStartup, and MergeFinalizerRegisterContext
++// have the same logic as plain Merge for this analysis.
++#define MergeThreadStartMacro(hctx, heap, callerCtx, newCtx) \
++  Context(newCtx), \
++  ContextFromRealContext[RealHContextFromHContext[hctx], heap] = newCtx
++
++#define MergeStartupMacro(hctx, heap, calleeCtx) \
++  Context(calleeCtx), \
++  ContextFromRealContext[RealHContextFromHContext[hctx], heap] = calleeCtx
++
++// This is exactly equivalent to the regular merge logic, but written
++// differently. At finalization, we create a new hctx, based on the
++// callerCtx, and then use this new hctx as we would in regular Merge.
++// The macro below does this, without referring to the new hctx (i.e.,
++// using knowledge of how it is created). This is necessary because since
++// the new hctx is created in the same rule, it will not yet have values
++// for its inverse functions (RealHContextFromHContext), so the rule will never
++// fire if done naively. The signature of the macro (which does not accept a
++// hctx) is a hint for avoiding this problem.
++#define MergeFinalizerRegisterContextMacro(callerCtx, inmethod, heap, newCtx) \
++  Context(newCtx), \
++  ContextFromRealContext[RealContext2FromContext[callerCtx], heap] = newCtx
+diff -urN doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/analysis.logic doop-bean/logic/bean-selective-2-object-sensitive+heap/analysis.logic
+--- doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/analysis.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-selective-2-object-sensitive+heap/analysis.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,190 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++/**
++ * Context-sensitive pointer analysis with context of 2 objects
++ * (AND for static calls 1 call-site).
++ * The object-sensitive contexts are computed by BEAN.
++ */
++
++#include "macros.logic"
++#include "../context-sensitive.logic"
++#include "../library.logic"
++
++// In this analysis, the real context is a pair of HeapAllocationRef AND
++// a MethodInvocationRef (for static calls) sometimes.
++// The real heap context is a single HeapAllocationRef. Keeping mapping 
++// functions is the way to handle analyses where HContext = Context 
++// (since the language considers them different types).
++// NOTE: Changed from HeapAllocationRef to CallGraphEdgeSourceRef
++// in order to use the invocation site for static calls.
++ContextFromRealContext[?heap1, ?heap2] = ?ctx ->
++  Context(?ctx), CallGraphEdgeSourceRef(?heap1), CallGraphEdgeSourceRef(?heap2).
++
++lang:skolem(`ContextFromRealContext).
++
++// NOTE: Use the following when using both the normal (caller's) context
++// and the invocation site for static calls.
++SpecialContextFromRealContext[?heap1, ?invocation, ?heap2] = ?ctx ->
++  CallGraphEdgeSourceRef(?heap1), CallGraphEdgeSourceRef(?heap2),
++  CallGraphEdgeSourceRef(?invocation), Context(?ctx). 
++
++lang:skolem(`SpecialContextFromRealContext).
++
++RealContext1FromContext[?ctx] = ?heap -> 
++  Context(?ctx), CallGraphEdgeSourceRef(?heap).
++
++RealContext2FromContext[?ctx] = ?heap -> 
++  Context(?ctx), CallGraphEdgeSourceRef(?heap).
++
++RealContext1FromContext[?ctx] = ?heap1,
++RealContext2FromContext[?ctx] = ?heap2 <- 
++  ContextFromRealContext[?heap1, ?heap2] = ?ctx.
++
++// NOTE: Use the following when using both the normal (caller's) context
++// and the invocation site for static calls.
++RealContext1FromContext[?ctx] = ?invocation,
++RealContext2FromContext[?ctx] = ?heap2 <- 
++  SpecialContextFromRealContext[_, ?invocation, ?heap2] = ?ctx.
++
++
++HeapInContext(?heap, ?ctx) ->
++  HeapAllocationRef(?heap), Context(?ctx).
++
++HeapInContext(?heap, ?ctx) <-
++  AssignNormalHeapAllocationSkolemOpt(?heap, ?ctx, _).
++
++#ifndef DISABLE_REFLECTION
++HeapInContext(?heap, ?ctx) <-
++  ReflectiveAssignHeapAllocation(?instruction, ?type, ?ctx, _),
++  ReflectiveHeapAllocation[?instruction, ?type]  = ?heap.
++#endif
++
++// ?heap1 is the real heap context of ?heap2.
++TwoHeapsFromContext(?ctx, ?heap1, ?heap2) ->
++  Context(?ctx),
++  HeapAllocationRef(?heap1),
++  HeapAllocationRef(?heap2).
++
++TwoHeapsFromContext(?ctx, ?heap1, ?heap2) <-
++  (
++   ContextFromRealContext[?heap1, ?heap2] = ?ctx;
++   SpecialContextFromRealContext[?heap1, _, ?heap2] = ?ctx
++  ),
++  HeapAllocationRef(?heap1),
++  HeapAllocationRef(?heap2).
++
++BeanHContext[?ctx, ?heap] = ?heapctx ->
++  Context(?ctx), HeapAllocationRef(?heap), CallGraphEdgeSourceRef(?heapctx).
++
++BeanHContext[?ctx, ?heap] = ?heapctx <-
++  HeapInContext(?heap, ?ctx),
++  TwoHeapsFromContext(?ctx, ?heap1, ?heap2),
++  BeanHeapContext[?heap1, ?heap2, ?heap] = ?heapctx.
++
++// Due to some special context handling of Doop, some contexts would be
++// missed by BEAN. In this case, we make Doop regress to traditional
++// object-sensitivity.
++BeanHContext[?ctx, ?heap] = ?heap2 <-
++  HeapInContext(?heap, ?ctx),
++  TwoHeapsFromContext(?ctx, ?heap1, ?heap2),
++  !BeanHeapContext[?heap1, ?heap2, ?heap] = _.
++
++// In selective 2 object-sensitivity, some contexts consist of 1 heap and
++// 2 call sites. In this case,  we make Doop regress to traditional
++// object-sensitivity.
++BeanHContext[?ctx, ?heap] = ?heap2 <-
++  HeapInContext(?heap, ?ctx),
++  SpecialContextFromRealContext[?realCtx1, _, ?heap2] = ?ctx,
++  !HeapAllocationRef(?realCtx1).
++
++
++
++HContextFromRealHContext[?heap] = ?hctx ->
++  HContext(?hctx), CallGraphEdgeSourceRef(?heap).
++
++lang:skolem(`HContextFromRealHContext).
++
++RealHContextFromHContext[?hctx] = ?heap -> 
++  HContext(?hctx), CallGraphEdgeSourceRef(?heap).
++
++RealHContextFromHContext[?hctx] = ?heap <-
++  HContextFromRealHContext[?heap] = ?hctx.
++
++// Creating special immutable heap allocation constant
++ImmutableHeapValue[] = ?immHeap <-
++  HeapAllocationValue(?immHeap, "<<immutable>>").
++
++
++// Create initial objects with their heapcontexts.
++HContextFromRealHContext[?heap] = ?hctx,
++HContext(?hctx),
++SystemThreadGroup(?hctx, ?alloc) <-
++  MySystemThreadGroup(?heap, ?alloc).
++
++HContextFromRealHContext[?heap] = ?hctx,
++HContext(?hctx),
++MainThreadGroup(?hctx, ?alloc) <-
++  MyMainThreadGroup(?heap, ?alloc).
++
++HContextFromRealHContext[?heap] = ?hctx,
++HContext(?hctx),
++MainThread(?hctx, ?alloc) <-
++  MyMainThread(?heap, ?alloc).
++
++/**
++ * Merge optimization hack
++ */
++
++// For this analysis, we only need two of the parameters that may 
++// influence the new context object.
++MyMergeBasis(?hctx, ?heap) <-
++  MergeBasis(_, _, ?hctx, ?heap).
++
++// We create new context objects sparingly, because of the high cost.
++// We also cache them, so they can be looked up without a join.
++Context(?calleeCtx),
++ContextFromRealContext[RealHContextFromHContext[?hctx],?heap] = ?calleeCtx,
++OptimizeMerge[?hctx, ?heap] = ?calleeCtx <-
++  MyMergeBasis(?hctx, ?heap).
++
++  
++/**
++ * Reachable
++ */
++ReachableContext(?ctx, ?method),
++ContextFromRealContext[?initheap,?initheap] = ?ctx,
++Context(?ctx)
++ <-
++  MainMethodDeclaration(?method),
++  HeapAllocationValue(?initheap, "<<initial-context>>").
++
++ReachableContext(?ctx, ?method),
++ContextFromRealContext[?startupheap,?startupheap] = ?ctx,
++Context(?ctx)
++ <-
++  ImplicitReachable(?method),
++  HeapAllocationValue(?startupheap, "<<jvm-startup>>").
++
++ReachableContext(?ctx, ?clinit),
++ContextFromRealContext[?clinitheap,?clinitheap] = ?ctx,
++Context(?ctx)
++ <-
++  InitializedClass(?class),
++  ClassInitializer[?class] = ?clinit,
++  HeapAllocationValue(?clinitheap, "<<class-initialization>>").
+diff -urN doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/declarations.logic doop-bean/logic/bean-selective-2-object-sensitive+heap/declarations.logic
+--- doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/declarations.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-selective-2-object-sensitive+heap/declarations.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,31 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "macros.logic"
++#include "../context-sensitive-declarations.logic"
++
++// For this analysis, contexts are heap objects, so this is
++// what the initial system objects should have.
++MySystemThreadGroup(?heap, ?alloc) ->
++  HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
++
++MyMainThreadGroup(?heap, ?alloc) ->
++  HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
++
++MyMainThread(?heap, ?alloc) ->
++  HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
+diff -urN doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/delta.logic doop-bean/logic/bean-selective-2-object-sensitive+heap/delta.logic
+--- doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/delta.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-selective-2-object-sensitive+heap/delta.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,47 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "macros.logic"
++#include "../library/common-delta.logic"
++
++/**
++ * Special calling contexts
++ *
++ * Note: the type is necessary (java.lang.String), but never used. It
++ * could be anything. It also needs to be an existing type, otherwise
++ * the sanity checks will barf.
++ */
++PlusHeapAllocationRef(?heap, "<<initial-context>>", "java.lang.String").
++PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String").
++PlusHeapAllocationRef(?heap, "<<class-initialization>>", "java.lang.String").
++PlusHeapAllocationRef(?heap, "<<immutable>>", "java.lang.String").
++
++/**
++ * Special objects
++ */
+++MySystemThreadGroup(?heap, ?alloc),
++  PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String"),
++  PlusHeapAllocationRef(?alloc, "<<system-thread-group>>", "java.lang.ThreadGroup").
++
+++MyMainThreadGroup(?heap, ?alloc),
++  PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String"),
++  PlusHeapAllocationRef(?alloc, "<<main-thread-group>>", "java.lang.ThreadGroup").
++
+++MyMainThread(?heap, ?alloc),
++  PlusHeapAllocationRef(?heap, "<<jvm-startup>>", "java.lang.String"),
++  PlusHeapAllocationRef(?alloc, "<<main-thread>>", "java.lang.Thread").
+diff -urN doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/macros.logic doop-bean/logic/bean-selective-2-object-sensitive+heap/macros.logic
+--- doop-r160113-bin/logic/bean-selective-2-object-sensitive+heap/macros.logic	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/logic/bean-selective-2-object-sensitive+heap/macros.logic	2016-08-29 11:38:28.000000000 +1000
+@@ -0,0 +1,73 @@
++/* Bean - Making k-Object-Sensitive Pointer Analysis More Precise with Still k-Limiting
++ *
++ * Copyright (C) 2016 Tian Tan, Yue Li, Jingling Xue
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "../library/fact-macros.logic"
++
++// For this analysis, every heap context recorded on allocation
++// corresponds to the most significant element of the calling 
++// context of the allocator method.
++#define RecordMacro(ctx, heap, hctx) \
++  HContext(hctx), \
++  HContextFromRealHContext[BeanHContext[ctx, heap]] = hctx
++
++#define RecordImmutableMacro(ctx, heap, immCtx) \
++  HContext(immCtx), \
++  HContextFromRealHContext[ImmutableHeapValue[]] = immCtx
++
++
++// For this analysis the context of a method call corresponds to the
++// identity of the receiver object and the receiver object of the caller.
++// Again, this may trigger creation of a new object.
++#define MergeMacro(callerCtx, invocation, hctx, heap, calleeCtx) \
++  Context(calleeCtx), \
++  ContextFromRealContext[RealHContextFromHContext[hctx], heap] = calleeCtx
++
++#define MergeBasisMacro(callerCtx, invocation, hctx, heap) \
++  MergeBasis(callerCtx, invocation, hctx, heap)
++
++#define OptimizeMergeMacro(callerCtx, invocation, hctx, heap, calleeCtx) \
++  OptimizeMerge[hctx, heap] = calleeCtx
++
++// For this analysis, static calls use additionally the invocation site as a context.
++#define MergeStaticMacro(callerCtx, invocation, calleeCtx) \
++  Context(calleeCtx), \
++  SpecialContextFromRealContext[RealContext1FromContext[callerCtx], invocation, \
++                                RealContext2FromContext[callerCtx]] = calleeCtx
++
++// MergeThreadStart, MergeStartup, and MergeFinalizerRegisterContext
++// have the same logic as plain Merge for this analysis.
++#define MergeThreadStartMacro(hctx, heap, callerCtx, newCtx) \
++  Context(newCtx), \
++  ContextFromRealContext[RealHContextFromHContext[hctx], heap] = newCtx
++
++#define MergeStartupMacro(hctx, heap, calleeCtx) \
++  Context(calleeCtx), \
++  ContextFromRealContext[RealHContextFromHContext[hctx], heap] = calleeCtx
++
++// This is exactly equivalent to the regular merge logic, but written
++// differently. At finalization, we create a new hctx, based on the
++// callerCtx, and then use this new hctx as we would in regular Merge.
++// The macro below does this, without referring to the new hctx (i.e.,
++// using knowledge of how it is created). This is necessary because since
++// the new hctx is created in the same rule, it will not yet have values
++// for its inverse functions (RealHContextFromHContext), so the rule will never
++// fire if done naively. The signature of the macro (which does not accept a
++// hctx) is a hint for avoiding this problem.
++#define MergeFinalizerRegisterContextMacro(callerCtx, inmethod, heap, newCtx) \
++  Context(newCtx), \
++  ContextFromRealContext[RealContext2FromContext[callerCtx], heap] = newCtx
+diff -urN doop-r160113-bin/logic/library/common-delta.logic doop-bean/logic/library/common-delta.logic
+--- doop-r160113-bin/logic/library/common-delta.logic	2013-01-16 07:31:46.000000000 +1100
++++ doop-bean/logic/library/common-delta.logic	2016-08-29 09:40:57.000000000 +1000
+@@ -1,6 +1,7 @@
+ #include "native-delta.logic"
+ 
+ PlusHeapAllocationRef(?alloc, "<<string-constant>>", "java.lang.String").
++PlusHeapAllocationRef(?alloc, "<<string-object>>", "java.lang.String").
+ PlusHeapAllocationRef(?alloc, "<<string-buffer>>", "java.lang.StringBuffer").
+ 
+ #if defined(JRE15) || defined(JRE16)
+diff -urN doop-r160113-bin/logic/library/fact-declarations.logic doop-bean/logic/library/fact-declarations.logic
+--- doop-r160113-bin/logic/library/fact-declarations.logic	2013-01-16 07:31:46.000000000 +1100
++++ doop-bean/logic/library/fact-declarations.logic	2016-08-29 10:19:21.000000000 +1000
+@@ -489,3 +489,21 @@
+   MethodInvocationRef(?invocation),
+   VarRef(?to),
+   VarRef(?field).
++  
++  
++/**
++ * The string constants that would be distinguished.
++ */
++DistinctStringConstant(?heap) -> HeapAllocationRef(?heap).
++
++
++/**
++ * Heap contexts computed by BEAN.
++ */
++
++BeanHeapContext[?allocHctx, ?allocator, ?heap] = ?newHctx ->
++  HeapAllocationRef(?allocHctx),
++  HeapAllocationRef(?allocator),
++  HeapAllocationRef(?heap),
++  HeapAllocationRef(?newHctx).
++  
+\ No newline at end of file
+diff -urN doop-r160113-bin/logic/library/reflection.logic doop-bean/logic/library/reflection.logic
+--- doop-r160113-bin/logic/library/reflection.logic	2013-01-16 07:31:46.000000000 +1100
++++ doop-bean/logic/library/reflection.logic	2016-08-29 10:08:22.000000000 +1000
+@@ -118,6 +118,7 @@
+ //YANNIS (REVIEW): needs optimization. Create opt predicate computed
+ //from first three below, but reordering the ?param, ?invocation
+ //so that VarPointsTo can also index it efficiently.
++ReflectionStringConstant(?constant),
+ ReflectiveAssignClassConstant(?ctx, ?invocation, ?type) <-
+   java:lang:Class:forName(?invocation, ?inmethod),
+   ReachableContext(?ctx, ?inmethod),                         // recursive
+diff -urN doop-r160113-bin/logic/library/string-constants.logic doop-bean/logic/library/string-constants.logic
+--- doop-r160113-bin/logic/library/string-constants.logic	2013-01-16 07:31:46.000000000 +1100
++++ doop-bean/logic/library/string-constants.logic	2016-08-29 10:07:54.000000000 +1000
+@@ -67,6 +67,18 @@
+   HeapAllocationValue(?constant, "<<string-constant>>").
+ #endif
+ 
++ReflectionStringConstant(?heap) -> HeapAllocationRef(?heap).
++
++#ifdef DISTINGUISH_SPECIFIED_STRING_CONSTANTS
++HeapAllocation:Merge[?heap] = ?constant <-
++  StringConstant(?heap),
++  ! DistinctStringConstant(?heap),
++  HeapAllocationValue(?constant, "<<string-constant>>").
++
++HeapAllocation:ContextInsensitive(?heap) <-
++  DistinctStringConstant(?heap).
++#endif
++
+ #ifdef DISTINGUISH_CLASS_STRING_CONSTANTS
+ HeapAllocation:Merge[?heap] = ?constant <-
+   StringConstant(?heap),
+@@ -114,7 +126,12 @@
+  * String buffers and builders
+  *************************************************************/
+ 
+-#ifdef MERGE_STRING_BUFFERS
++HeapAllocation:Merge[?heap] = ?mergeHeap <-
++  HeapAllocation:Type[?heap] = ?type,
++  Type:Value(?type:"java.lang.String"),
++  ! StringConstant(?heap),
++  HeapAllocationValue(?mergeHeap, "<<string-object>>").
++
+ HeapAllocation:Merge[?heap] = ?mergeHeap <-
+   HeapAllocation:Type[?heap] = ?type,
+   Type:Value(?type:"java.lang.StringBuffer"),
+@@ -124,7 +141,7 @@
+   HeapAllocation:Type[?heap] = ?type,
+   Type:Value(?type:"java.lang.StringBuilder"),
+   HeapAllocationValue(?mergeHeap, "<<string-builder>>").
+-#endif
++
+ 
+ /*************************************************************
+  * Throwable
+diff -urN doop-r160113-bin/run doop-bean/run
+--- doop-r160113-bin/run	2013-01-16 07:38:09.000000000 +1100
++++ doop-bean/run	2016-08-29 14:24:46.000000000 +1000
+@@ -157,6 +157,8 @@
+ mainclass=""
+ os="unix"
+ dynamics=""
++beanctx=""
++distStrConst=""
+ logicProfile=""
+ logLevel=""
+ refine="false"
+@@ -235,6 +237,12 @@
+       CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_NO_STRING_CONSTANTS"
+       shift 1
+       ;;
++    "-distinguish-specified-string-constants")
++      CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_SPECIFIED_STRING_CONSTANTS"
++      shift 1
++	  distStrConst="$1"
++	  shift 1
++      ;;
+     "-merge-string-buffers")
+       CPPFLAGS_STRING_BUFFERS="-DMERGE_STRING_BUFFERS"
+       shift 1
+@@ -295,6 +303,11 @@
+       dynamics="${dynamics} $1"
+       shift 1
+       ;;
++    "-bean-context")
++      shift 1
++      beanctx="$1"
++      shift 1
++      ;;
+     "-logicProfile")
+       shift 1
+       logicProfile="-logicProfile $1"
+@@ -668,6 +681,33 @@
+ 	# 	timing $bloxbatch -db $database -addBlock -file tmp/spanning.logic
+ 	# fi
+ 
++
++   # Read contexts computed by BEAN
++	if [ ! "x$beanctx" = "x" ]; then
++		echo "loading BEAN heap context ... $beanctx"
++		cat > tmp/beanctx.import <<EOF
++option,delimiter,"	"
++option,hasColumnNames,false
++
++fromFile,"$(readlink -f $beanctx)",a,allochctx,b,allocator,c,heap,d,newhctx
++toPredicate,BeanHeapContext,allochctx,allocator,heap,newhctx
++EOF
++		$bloxbatch -db $database -import $(pwd)/tmp/beanctx.import
++	fi
++
++	# Read the string constants which need to be distinguished
++	if [ ! "x$distStrConst" = "x" ]; then
++		cat > tmp/distStrConst.import <<EOF
++option,delimiter,"	"
++option,hasColumnNames,false
++
++fromFile,"$(readlink -f $distStrConst)",a,heap
++toPredicate,DistinctStringConstant,heap
++EOF
++		$bloxbatch -db $database -import $(pwd)/tmp/distStrConst.import
++	fi
++
++
+ 	echo -n "loading $analysis rules "
+ 
+ 	if test "$logMemStats" = "true"; then
+@@ -986,6 +1026,30 @@
+ 
+ ###############################################################################
+ 
++#echo $originalCommandLine
++
++# extract name of first jar as program name
++jarList=($jars)
++filename=$(basename ${jarList[0]})
++programname="${filename%.*}"
++#echo $programname
++
++strfile="tmp/$programname.refstr"
++contextfile="tmp/$programname-BeanContext.facts"
++#echo $strfile
++#echo $contextfile
++
++
++if [[ $analysis == bean-* ]]; then
++	python scripts/bean.py $analysis $originalCommandLine
++	beanctx=$contextfile
++fi
++
++if [ -f $strfile ]; then
++    distStrConst=$strfile
++fi
++
++
+ singleRun
+ init-analysis
+ 
+@@ -1022,3 +1086,4 @@
+ size=$(pollFootprint $database)
+ $bloxbatch -db $database -execute "+Stats:Runtime($size, \"disk footprint (with stats) (KB)\")."
+ printf "\n%-80s %'.0f\n" "disk footprint (with stats) (KB)" $size
++
+diff -urN doop-r160113-bin/scripts/bean.py doop-bean/scripts/bean.py
+--- doop-r160113-bin/scripts/bean.py	1970-01-01 10:00:00.000000000 +1000
++++ doop-bean/scripts/bean.py	2016-08-29 14:52:32.000000000 +1000
+@@ -0,0 +1,83 @@
++#!/usr/bin/python
++import os, sys
++
++BEAN_CP = 'bean.jar'
++
++def splitArgs(args):
++ analysis = args[0]
++ i = 1
++ while i < len(args):
++  if args[i] == analysis:
++   break
++  i += 1
++ opts = args[1:i]
++ jars = args[i+1:]
++ argMap = { 'analysis':analysis, 'opts':opts, 'jars':jars }
++ return argMap
++ 
++# use the name of first jar as program name
++def getProgramName(argMap):
++ basename = os.path.basename(argMap['jars'][0])
++ return os.path.splitext(basename)[0]
++ 
++def runCIanalysis(argMap):
++ print
++ print 'Running pre-analysis (context-insensitive analysis) ...'
++ cmd = './run %s context-insensitive %s' % (' '.join(argMap['opts']), ' '.join(argMap['jars']))
++ os.system(cmd)
++
++def getReflectionString(dbDir, programName):
++ def removeSpace(filepath):
++  f = open(filepath)
++  lines = f.readlines()
++  f.close()
++  f = open(filepath, 'w')
++  for line in lines:
++   f.write(line.strip() + '\n')
++  f.close()
++ 
++ filepath = os.path.join('tmp', programName + '.refstr')
++ cmd = 'bloxbatch -db %s -query ReflectionStringConstant > %s' % (dbDir, filepath)
++ os.system(cmd)
++ removeSpace(filepath)
++ return filepath
++ 
++def runBean(dbDir, programName):
++ print
++ print 'Running BEAN ...'
++ contextfile = os.path.join('tmp', programName + '-BeanContext.facts')
++ cmd = 'java -cp %s bean.main.DoopMain %s %s' % (BEAN_CP, dbDir, contextfile)
++ os.system(cmd)
++ return contextfile
++ 
++def readLines(filepath):
++ f = open(filepath)
++ lines = f.readlines()
++ f.close()
++ return lines
++ 
++def merge(ctxfile, strFile):
++ strconsts = set([line.strip() for line in open(strFile)])
++ beanhctx = [line.strip() for line in readLines(ctxfile)]
++ out = open(ctxfile, 'w')
++ for line in beanhctx:
++  [heap1, heap2, heap, hctx] = line.split('\t')
++  if heap1 in strconsts: heap1 = '<<string-constant>>'
++  if hctx in strconsts: hctx = '<<string-constant>>'
++  out.write('\t'.join([heap1,heap2,heap,hctx]) + '\n')
++ out.close()
++
++def run(args):
++ argMap = splitArgs(args)
++ programName = getProgramName(argMap)
++ runCIanalysis(argMap)
++ dbDir = 'last-analysis'
++ strfile = getReflectionString(dbDir, programName)
++ contextfile = runBean(dbDir, programName)
++ merge(contextfile, strfile)
++ print 'Ready for running BEAN-directed analysis\n'
++ 
++if __name__ == '__main__':
++ args = sys.argv[1:]
++ run(args)
++ 
+\ No newline at end of file

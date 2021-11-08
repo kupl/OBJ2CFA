@@ -1,0 +1,32 @@
+
+MyInvo(?invocation)<-
+  !AssignHeapAllocation(_, _, ?meth),
+  Invocation:In[?invocation] = ?meth.
+
+
+
+
+
+MyInvo(?invocation) <-
+  MethodDeclaringClass[?to] = ?class,
+  CallGraphEdge(_, ?invocation, _, ?to),
+  Invocation:In[?invocation] = ?meth,
+  MethodDeclaringClass[?meth] = ?class.
+
+/*
+MyInvo1(?invocation) <-
+  SuspectInvo1(?invocation),
+  !MyInvo(?invocation).
+*/
+
+
+llInvo(?invocation)->MethodInvocationRef(?invocation).
+llInvo(?invocation)<-
+  SuspectInvo(?invocation).
+
+
+llInvo(?invocation)<-
+  MyInvo(?invocation).
+
+
+

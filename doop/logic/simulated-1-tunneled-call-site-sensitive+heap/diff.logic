@@ -1,0 +1,4 @@
+TunnelingAbstractionInvo(?invo)<-
+  !Left2(?invo),
+  TunnelingAbstraction(?invo).
+

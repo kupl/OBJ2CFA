@@ -1,0 +1,79 @@
+Invocation:In[?invocation] = ?method <-
+  SpecialMethodInvocation:In(?invocation,?method).
+
+
+Invocation:In[?invocation] = ?method <-
+  VirtualMethodInvocation:In(?invocation,?method).
+
+Invocation:In[?invocation] = ?method <-
+  StaticMethodInvocation:In(?invocation,?method).
+
+
+
+
+Invocation:Base[?invocation] = ?base <-
+  SpecialMethodInvocation:Base[?invocation] = ?base.
+
+
+Invocation:Base[?invocation] = ?base <-
+  VirtualMethodInvocation:Base[?invocation] = ?base.
+
+
+//Assign
+VarTaint(?ctx,?var)->Context(?ctx),VarRef(?var).
+
+
+VarTaint(?ctx, ?to) <-
+  OptAssignLocal(?from, ?to),
+  VarTaint(?ctx, ?from).
+
+
+
+VarTaint(?ctx, ?to) <-
+  AssignCast(_, ?from, ?to, _),
+  VarTaint(?ctx, ?from).
+
+
+//Store
+VarTaint(?ctx, ?to)<-
+  StoreInstanceField(?from, ?to, _, _),
+  VarTaint(?ctx, ?from).
+
+ 
+VarTaint(?ctx, ?to)<-
+  StoreArrayIndex(?from, ?to, _),
+  VarTaint(?ctx, ?from).
+
+/*
+TaintField(?sig)<-
+  StoreStaticField(?from, ?sig, _),
+  VarTaint(?ctx, ?from).
+*/
+
+//Load
+VarTaint(?ctx, ?to)<-
+  LoadInstanceField(?from, _, ?to, _),
+  VarTaint(?ctx, ?from).
+
+ 
+VarTaint(?ctx, ?to)<-
+  LoadArrayIndex(?from, ?to, _),
+  VarTaint(?ctx, ?from).
+
+/*
+VarTaint(?ctx, ?to)<-
+  LoadStaticField(?sig, ?to, _),
+  TaintField(?sig).
+*/
+ 
+VarTaint(?toCtx, ?to) <-
+  VarTaint(?fromCtx, ?from),
+  OptInterproceduralAssign(?toCtx, ?to, ?fromCtx, ?from).
+
+
+
+
+
+
+
+

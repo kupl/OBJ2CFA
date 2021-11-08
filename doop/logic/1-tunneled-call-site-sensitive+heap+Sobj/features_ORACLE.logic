@@ -1,0 +1,385 @@
+Feature0(?invocation)<-
+  string:like(?meth,"%java%"),
+  Invocation:In[?invocation] = ?meth.
+Feature1(?invocation)<-
+  string:notlike(?meth,"%java%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature2(?invocation)<-
+  string:like(?meth,"%lang%"),
+  Invocation:In[?invocation] = ?meth.
+Feature3(?invocation)<-
+  string:notlike(?meth,"%lang%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature4(?invocation)<-
+  string:like(?meth,"%sun%"),
+  Invocation:In[?invocation] = ?meth.
+Feature5(?invocation)<-
+  string:notlike(?meth,"%sun%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature6(?invocation)<-
+  string:like(?meth,"%()%"),
+  Invocation:In[?invocation] = ?meth.
+Feature7(?invocation)<-
+  string:notlike(?meth,"%()%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature8(?invocation)<-
+  string:like(?meth,"%void%"),
+  Invocation:In[?invocation] = ?meth.
+Feature9(?invocation)<-
+  string:notlike(?meth,"%void%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature10(?invocation)<-
+  string:like(?meth,"%security%"),
+  Invocation:In[?invocation] = ?meth.
+Feature11(?invocation)<-
+  string:notlike(?meth,"%security%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature12(?invocation)<-
+  string:like(?meth,"%int%"),
+  Invocation:In[?invocation] = ?meth.
+Feature13(?invocation)<-
+  string:notlike(?meth,"%int%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature14(?invocation)<-
+  string:like(?meth,"%util%"),
+  Invocation:In[?invocation] = ?meth.
+Feature15(?invocation)<-
+  string:notlike(?meth,"%util%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature16(?invocation)<-
+  string:like(?meth,"%String%"),
+  Invocation:In[?invocation] = ?meth.
+Feature17(?invocation)<-
+  string:notlike(?meth,"%String%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature18(?invocation)<-
+  string:like(?meth,"%init%"),
+  Invocation:In[?invocation] = ?meth.
+Feature19(?invocation)<-
+  string:notlike(?meth,"%init%"),
+  Invocation:In[?invocation] = ?meth.
+
+/////////////////////////////////
+
+Feature20(?invocation)<-
+  string:like(?meth,"%$%:%"),
+  Invocation:In[?invocation] = ?meth.
+Feature21(?invocation)<-
+  string:notlike(?meth,"%$%:%"),
+  Invocation:In[?invocation] = ?meth.
+
+Feature22(?invocation),Local(?invocation)<-
+  AssignLocal(_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+Feature23(?invocation)<-
+  !AssignLocal(_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+/////////////////////////////////////////////////////////To be Deleted
+/*
+Feature24(?invo)<-
+  Feature0(?invo),
+  Feature5(?invo),
+  Feature11(?invo),
+  Feature14(?invo),
+  MethodInvocationRef(?invo).
+
+Feature25(?invo)<-
+  !Feature54(?invo),
+  MethodInvocationRef(?invo).
+*/
+
+
+Feature24(?invocation)<-
+//  Feature41(?invocation),
+//  Feature38(?invocation).
+
+  LoadArrayIndex(_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+Feature25(?invocation)<-
+  !Feature24(?invocation),
+  MethodInvocationRef(?invocation).
+
+  //!LoadArrayIndex(_,_,?meth),
+  //Invocation:In[?invocation] = ?meth.
+////////////////////////////////////////////////////////
+
+
+
+Feature26(?invocation),Var(?invocation)<-
+  Var:DeclaringMethod(_,?meth),
+  Invocation:In[?invocation] = ?meth.
+Feature27(?invocation)<-
+  !Var:DeclaringMethod(_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+
+//////////////////////////////////////////////////////
+/*
+Feature28(?invo)<-
+  Feature33(?invo),
+  Feature15(?invo),
+  MethodInvocationRef(?invo).
+Feature29(?invo)<-
+  !Feature28(?invo),
+  MethodInvocationRef(?invo).
+*/
+Feature28(?invocation)<-
+  StoreInstanceField(_,_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+Feature29(?invocation),NoStore(?invocation)<-
+  !StoreInstanceField(_,_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+//////////////////////////////////////////////////////
+Feature30(?invocation)<-
+  ManyClassInvocation(?invocation).
+
+Feature31(?invocation)<-
+  !ManyClassInvocation(?invocation),
+  MethodInvocationRef(?invocation).
+Feature32(?invocation)<-
+  AssignHeapAllocation(_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+Feature33(?invocation),NoAlloc(?invocation)<-
+  !AssignHeapAllocation(_,_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+Feature34(?invo)<-
+  ProtectedCall(?invo),
+  MethodInvocationRef(?invo).
+Feature35(?invo)<-
+  !ProtectedCall(?invo),
+  MethodInvocationRef(?invo).
+
+
+Feature36(?invocation)<-
+  ExceptionHandler:Method(_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+Feature37(?invocation)<-
+  !ExceptionHandler:Method(_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+
+/////////////////////////////////////////////////////////////////////
+
+Feature38(?invo)<-
+  ThisCall(?invo),
+  MethodInvocationRef(?invo).
+Feature39(?invo)<-
+  !ThisCall(?invo),
+  MethodInvocationRef(?invo).
+
+
+Feature40(?invo)<-
+  FreshCall(?invo),
+  MethodInvocationRef(?invo).
+Feature41(?invo),NoThis(?invo)<-
+  !FreshCall(?invo),
+  MethodInvocationRef(?invo).
+
+Feature42(?invocation),Static(?invocation)<-
+  StaticMethodInvocation(_,?meth,_),
+  Invocation:In[?invocation] = ?meth.
+Feature43(?invocation)<-
+  !StaticMethodInvocation(_,?meth,_),
+  Invocation:In[?invocation] = ?meth.
+
+
+
+Feature44(?invo)<-
+  MultiCalledInvo(?invo),
+  MethodInvocationRef(?invo).
+Feature45(?invo)<-
+  !MultiCalledInvo(?invo),
+  MethodInvocationRef(?invo).
+
+Feature46(?invo)<-
+  StaticFieldCall(?invo),
+  MethodInvocationRef(?invo).
+Feature47(?invo)<-
+  !StaticFieldCall(?invo),
+  MethodInvocationRef(?invo).
+
+Feature48(?invo)<-
+  CombinedFeature(?invo),
+  MethodInvocationRef(?invo).
+Feature49(?invo)<-
+  !CombinedFeature(?invo),
+  MethodInvocationRef(?invo).
+
+Feature50(?invo)<-
+  ScalableInvocation(?invo),
+  //InitThisVoid(?invo),
+  MethodInvocationRef(?invo).
+Feature51(?invo)<-
+  !ScalableInvocation(?invo),
+  //!InitThisVoid(?invo),
+  MethodInvocationRef(?invo).
+
+
+Feature52(?invo)<-
+  Feature42(?invo),
+  Feature14(?invo),
+  MethodInvocationRef(?invo).
+Feature53(?invo)<-
+  !Feature52(?invo),
+  MethodInvocationRef(?invo).
+
+Feature54(?invo)<-
+  Feature0(?invo),
+  Feature5(?invo),
+  Feature11(?invo),
+  Feature14(?invo),
+  MethodInvocationRef(?invo).
+Feature55(?invo)<-
+  !Feature54(?invo),
+  MethodInvocationRef(?invo).
+
+
+
+
+
+
+
+
+//ThisCall
+ThisCall(?invocation) <-
+  ThisBase(?base),
+  VirtualMethodInvocation:Base[?invocation] = ?base.
+
+ThisCall(?invocation) <-
+  ThisBase(?base),
+  SpecialMethodInvocation:Base[?invocation] = ?base.
+
+
+ThisBase(?to) <-
+  ThisBase(?from),
+  AssignLocal(?from, ?to, _).
+
+
+ThisBase(?var) <-
+  ThisVar[_] = ?var.
+
+//Fresh Param
+FreshCall(?invocation) <-
+  AllocVar(?var),
+  ActualParam[_,?invocation] = ?var.
+
+FreshCall(?invocation) <-
+  AllocVar(?var),
+  SpecialMethodInvocation:Base[?invocation] = ?var.
+
+FreshCall(?invocation) <-
+  AllocVar(?var),
+  SpecialMethodInvocation:Base[?invocation] = ?var.
+
+
+
+
+
+AllocVar(?to) <-
+  AllocVar(?from),
+  AssignLocal(?from, ?to, _).
+
+
+AllocVar(?to)<-
+  AssignHeapAllocation(_,?to,_).
+
+
+
+
+StaticFieldBase(?to)<-
+  LoadStaticField(_, ?to, _).
+
+ProtectedMethod(?meth), ProtectedCall(?invo)<-
+  Invocation:In[?invo] = ?meth,
+  string:like(?mod,"%protected%"),
+  MethodModifier(?mod,?meth).
+
+
+
+ExceptionInvocation(?invocation) <-
+  ExceptionHandler:Method(_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+ManyClassInvocation(?invocation) <-
+  Invocation:In[?invocation] = ?meth,
+  ManyMethodClass(?class),
+  MethodDeclaringClass[?meth] = ?class.
+
+
+ManyMethodClass(?class) <-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20. 
+
+
+
+MultiCalledInvo(?invo1),
+MultiCalledInvo(?invo2)<-
+  SpecialMethodInvocation:Signature[?invo1] = ?sig,
+  SpecialMethodInvocation:Signature[?invo2] = ?sig,
+  ?invo1 != ?invo2,
+  Invocation:In[?invo1] = ?meth,
+  Invocation:In[?invo2] = ?meth.
+
+MultiCalledInvo(?invo1),
+MultiCalledInvo(?invo2)<-
+  VirtualMethodInvocation:Signature[?invo1] = ?sig,
+  VirtualMethodInvocation:Signature[?invo2] = ?sig,
+  ?invo1 != ?invo2,
+  Invocation:In[?invo1] = ?meth,
+  Invocation:In[?invo2] = ?meth.
+
+/////CombinedFeatureInvo
+
+CombinedFeature(?invocation)<-
+  Feature20(?invocation),
+  ManyClassInvocation(?invocation).
+
+
+ScalableInvocation(?invocation) <-
+  ExceptionInvocation(?invocation),
+  ThisCall(?invocation),
+  ManyClassInvocation(?invocation).
+
+StaticFieldCall(?invocation) <-
+  StaticFieldBase(?base),
+  VirtualMethodInvocation:Base[?invocation] = ?base.
+
+StaticFieldCall(?invocation) <-
+  StaticFieldBase(?base),
+  SpecialMethodInvocation:Base[?invocation] = ?base.
+
+
+
+StaticFieldBase(?to) <-
+  StaticFieldBase(?from),
+  AssignLocal(?from, ?to, _).
+
+InitThisVoid(?invo)<-
+  string:like(?sig2,"%<init>%"),
+  SpecialMethodInvocation:Signature[?invo2] = ?sig2,
+  ActualParam[_,?invo2] = ?base,
+  //ThisBase(?base),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+  //string:like(?sig,"%void%()%"),
+  //SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+InitThisVoid(?invo)<-
+  string:like(?sig2,"%<init>%"),
+  SpecialMethodInvocation:Signature[?invo2] = ?sig2,
+  ActualParam[_,?invo2] = ?base,
+  //ThisBase(?base),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+  //string:like(?sig,"%void%()%"),
+  //SpecialMethodInvocation:Signature[?invo] = ?sig.

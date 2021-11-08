@@ -1,0 +1,155 @@
+ICSEInvocation1(?invocation)->MethodInvocationRef(?invocation).
+
+
+ICSEInvocation(?invocation) <-
+  Left(?invocation),
+  MethodInvocationRef(?invocation).
+
+
+ICSEInvocation(?invocation) <-
+  ICSEInvocation1(?invocation),
+  MethodInvocationRef(?invocation).
+
+F1(?invocation)->MethodInvocationRef(?invocation).
+F2(?invocation)->MethodInvocationRef(?invocation).
+
+DD(?invo)<-
+  MyInvocation(?invo),
+  !ICSEInvocation1(?invo).
+
+
+
+
+
+ICSEInvocation1(?invocation),F1(?invocation) <-
+  //!Left(?invocation),
+  //MyInvocation(?invocation),
+  //!Left(?invocation),
+  //!ClassLoader(?invocation),
+  !Feature14(?invocation),
+  Feature2(?invocation),
+  Feature13(?invocation),
+  Feature25(?invocation),
+  Feature31(?invocation),
+  
+  Feature47(?invocation),
+  Feature28(?invocation),
+  Feature26(?invocation),
+  Feature11(?invocation),
+  Feature5(?invocation),
+  Feature0(?invocation),//
+  Feature37(?invocation).//No alloc
+
+/*
+ICSEInvocation1(?invocation) <-
+  Feature2(?invocation),
+  //Feature18(?invocation),
+  Feature0(?invocation).//ParamCall
+*/
+
+/*
+ICSEInvoaction1(?invocation) <-
+  MyInvocation(?invocation),
+  //Feature33(?invocation),
+  Feature40(?invocation).//This call
+ICSEInvocation1(?invocation) <-
+  MyInvocation(?invocation),
+  //Feature33(?invocation),
+  Feature42(?invocation).//FieldCall
+ICSEInvocation1(?invocation) <-
+  MyInvocation(?invocation),
+  //Feature33(?invocation),
+  Feature44(?invocation).//ParamCall
+*/
+/*
+ICSEInvocation1(?invocation) <-
+  MyInvocation(?invocation),
+  //Feature33(?invocation),
+  Feature20(?invocation).//InnerClass
+*/
+
+ICSEInvocation1(?invocation),F2(?invocation) <-
+  //MyInvocation(?invocation),
+  //Feature33(?invocation),
+  //!Left2(?invocation),
+  !ScalableInvocation(?invocation),
+  //!TargetPrecision(?invocation),
+  //!ResourceBundle(?invocation),
+  //ManyClassInvocation(?invocation),
+  //!PrecisionInvocation(?invocation),
+  //!ResourceBundle(?invocation),
+  Feature28(?invocation),
+  Feature26(?invocation),
+  Feature17(?invocation),
+  Feature11(?invocation),
+  Feature5(?invocation),
+  Feature0(?invocation),
+  Feature14(?invocation).//util
+
+ICSEInvocation1(?invocation) <-  //Fixed
+  Feature0(?invocation),
+  Feature5(?invocation),
+  Feature11(?invocation),
+  Feature17(?invocation),
+  //MyInvocation(?invocation),
+  //SuspectInvo(?invocation),
+  Feature14(?invocation),//util
+  Feature47(?invocation),//FreshCall
+  Feature32(?invocation).//StaticCall
+
+
+CastInvocation(?invocation) <-
+  Invocation:In[?invocation] = ?inmethod,
+  AssignCast(_, _, _, ?inmethod).
+
+PrecisionInvocation(?invoaction) <-
+  CastInvocation(?invocation),
+  Feature20(?invocation),
+  ManyClassInvocation(?invocation),
+  ExceptionInvocation(?invoaction).
+
+
+
+ScalableInvocation(?invocation) <-
+  ExceptionInvocation(?invocation),
+  ThisCall(?invocation),
+  ManyClassInvocation(?invocation).
+
+ExceptionInvocation(?invocation) <-
+  ExceptionHandler:Method(_,?meth),
+  Invocation:In[?invocation] = ?meth.
+
+ManyClassInvocation(?invocation) <-
+  Invocation:In[?invocation] = ?meth,
+  ManyMethodClass(?class),
+  MethodDeclaringClass[?meth] = ?class.
+
+
+ManyMethodClass(?class) <-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20. 
+
+TargetPrecision(?invo) <-
+  Feature21(?invo),
+  Feature18(?invo),
+  Feature30(?invo),
+  ManyInvoMethod(?invo).
+
+
+ManyInvoMethod(?invo) <-
+  Invocation:In[?invo] = ?meth,
+  ?n > 5,
+  InvoMethodCounts[?meth] = ?n.
+
+
+InvoMethodCounts[?meth] = ?n <-
+   agg<<?n = count()>> Invocation:In[_] = ?meth.
+
+
+ResourceBundle(?invocation)<-//GotYou
+  Feature20(?invocation),
+  ManyClassInvocation(?invocation),
+  //string:like(?invocation,"%java.util.ResourceBundle$CacheKey%"),
+  MethodInvocationRef(?invocation).
+
+

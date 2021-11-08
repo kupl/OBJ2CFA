@@ -1,0 +1,15 @@
+TargetV(?base)<-
+  VirtualMethodInvocation:Base[?invocation] = ?base,
+  MinseokInvo(?invocation).
+
+
+TargetV(?base)<-
+  SpecialMethodInvocation:Base[?invocation] = ?base,
+  MinseokInvo(?invocation).
+
+
+
+ObjectToCall(?from,?to), MinseokInvo(?from) <-
+  CallGraphEdge(?ctx, ?from, ?ctx, ?to).
+
+

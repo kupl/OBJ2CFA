@@ -1,0 +1,61 @@
+Tunneling(?meth)->MethodSignatureRef(?meth).
+TunnelingM(?method)->MethodSignatureRef(?method).
+
+NormalHeapMethod[?heap] = ?inmethod -> HeapAllocationRef(?heap),MethodSignatureRef(?inmethod). 
+
+NormalHeapMethod[?heap] = ?inmethod,Normal(?heap)<-
+  AssignNormalHeapAllocation(?heap, _, ?inmethod).
+
+
+MethodsCounts[?method]=?n<-
+  agg<<?n = count()>> AssignHeapAllocation(_, _, ?method).
+
+StaticMethodInvocation:Method[?invocation] = ?inmethod <-
+  StaticMethodInvocation:In(?invocation, ?inmethod).
+
+
+OneHeapMethods(?meth)<-
+  MethodsCounts[?meth] = ?n,
+  ?n=1.
+
+ManyMethodClass(?class)<-
+  ClassMethodCounts[?class] = ?cnt,
+  ?cnt > 20.
+
+Tunneling(?meth) <-
+  Feature20(?meth),
+  MethodSignatureRef(?meth).
+
+
+/*
+Tunneling(?meth)<-
+  Feature20(?meth),Feature28(?meth),Feature11(?meth),Feature17(?meth),Feature45(?meth),Feature0(?meth),Feature5(?meth),
+  MethodSignatureRef(?meth).
+
+Tunneling(?meth)<-
+  Feature36(?meth),Feature11(?meth),Feature0(?meth),Feature28(?meth),Feature26(?meth),Feature31(?meth),Feature17(?meth),Feature5(?meth),Feature19(?meth),Feature7(?meth),Feature14(?meth),Feature21(?meth),
+  MethodSignatureRef(?meth).
+
+Tunneling(?meth)<-
+  Feature44(?meth),Feature28(?meth),Feature25(?meth),Feature11(?meth),Feature37(?meth),Feature26(?meth),Feature17(?meth),Feature39(?meth),Feature31(?meth),Feature5(?meth),Feature9(?meth),Feature35(?meth),Feature6(?meth),Feature14(?meth),Feature2(?meth),Feature32(?meth),Feature21(?meth),
+  MethodSignatureRef(?meth).
+
+
+
+
+
+TunnelingM(?meth)<-
+  Feature38(?meth),Feature28(?meth),Feature42(?meth),Feature41(?meth),Feature25(?meth),Feature26(?meth),Feature37(?meth),Feature11(?meth),Feature0(?meth),Feature5(?meth),Feature33(?meth),Feature17(?meth),Feature3(?meth),Feature21(?meth),Feature6(?meth),Feature35(?meth),
+MethodSignatureRef(?meth).
+
+
+TunnelingM(?meth)<-
+  Feature14(?meth),Feature28(?meth),Feature25(?meth),Feature0(?meth),Feature11(?meth),Feature5(?meth),Feature37(?meth),Feature26(?meth),Feature17(?meth),Feature41(?meth),Feature3(?meth),Feature33(?meth),Feature21(?meth),Feature35(?meth),Feature42(?meth),Feature38(?meth),Feature45(?meth),Feature30(?meth),Feature8(?meth),Feature18(?meth),Feature12(?meth),Feature7(?meth),
+  MethodSignatureRef(?meth).
+*/
+
+
+
+
+
+

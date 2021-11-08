@@ -1,0 +1,307 @@
+ReachableInvo(?from) <-
+  Stats:Simple:InsensCallGraphEdge(?from, _).
+
+
+
+MyThisVar(?var) <-
+  ThisVar[_] = ?var.
+
+
+MyThisVar(?to) <-
+  MyThisVar(?from),
+  AssignLocal(?from, ?to, _).
+
+
+I4(?invo) <- 
+  FieldTheInvo(?invo).
+
+I4(?invo) <- 
+  InitInInit(?invo).
+
+
+I5(?invo)<-
+  ReachableInvo(?invo),
+  !ActualParam[2, ?invo] = _,
+  ActualParam[1, ?invo] = ?base1,
+  ActualParam[0, ?invo] = ?base,
+  StaticMethodInvocation:In(?invo,?inmeth),
+  AssignHeapAllocation(_, ?base1, ?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+I5(?invo)<-
+  ReachableInvo(?invo),
+  !ActualParam[1, ?invo] = _,
+  ActualParam[0, ?invo] = ?base,
+  StaticMethodInvocation:In(?invo,?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+
+
+
+I5(?invo)<-
+  ReachableInvo(?invo),
+  !ActualParam[1, ?invo] = _,
+  ActualParam[0, ?invo] = ?var,
+  VirtualMethodInvocation:Base[?invo] = ?base,
+  VirtualMethodInvocation:In(?invo, ?inmeth),
+  AssignHeapAllocation(_, ?var, ?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+I5(?invo)<-
+  ReachableInvo(?invo),
+  !ActualParam[0, ?invo] = _,
+  VirtualMethodInvocation:Base[?invo] = ?base,
+  VirtualMethodInvocation:In(?invo, ?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+I5(?invo) <-
+  string:like(?meth,"%javax.swing%:%"),
+  Invocation:In[?invo] = ?meth.
+
+
+
+
+InitInInit(?invo)<-
+  RealInitMeth(?inmeth),
+  SingleMethodInvocations(?invo),
+  //!ActualParam[_,?invo] = _,
+  string:like(?tometh,"%<init>%"),
+  string:like(?inmeth,"%<init>%"),
+  MyThisVar(?this), 
+  StoreInstanceField(?base, ?this, _, ?inmeth),
+  SpecialMethodInvocation:Signature[?invo] = ?tometh,
+  //Stats:Simple:InsensCallGraphEdge(?invo, ?tometh),
+  //AssignHeapAllocation(_, ?base, ?inmeth),
+  SpecialMethodInvocation:Base[?invo] = ?base,
+  SpecialMethodInvocation:In(?invo,?inmeth).
+
+
+  
+RealInitMeth(?inmeth)<-
+  SpecialMethodInvocation:In(?invo, ?inmeth),
+  //Invocation:In[?invo] = ?inmeth,
+  AbstractClassMeth(?tometh),
+  //SpecialMethocInvocation(?invo,_ ,?tometh,_).
+  SpecialMethodInvocation:Signature[?invo] = ?tometh.
+  //Stats:Simple:InsensCallGraphEdge(?invo, ?tometh).
+
+
+
+HeapMethCnt[?inmeth] = ?n <-
+  agg<<?n = count()>> AssignHeapAllocation(_, _, ?inmeth).
+
+
+FieldTheInvo(?invo)<-
+  ReachableInvo(?invo),
+  FormalVar(?var),
+  ActualParam[0,?invo] = ?var,
+  SingleParamInvo(?invo),
+  LoadInstanceField(?this, _, ?base, _),
+  MyThisVar(?this),
+  SingleMethodInvocations(?invo),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+
+FieldTheInvo(?invo)<-
+  ReachableInvo(?invo),
+  FormalVar(?var),
+  ActualParam[0,?invo] = ?var,
+  SingleParamInvo(?invo),
+  LoadInstanceField(?this, _, ?base, _),
+  MyThisVar(?this),
+  SingleMethodInvocations(?invo),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+
+
+
+SingleMethodInvocations(?invo) <-
+  MethToMeth(?fromMeth,?toMeth,?invo),
+  ?n = 1,
+  MethToMethInvoCnt[?fromMeth,?toMeth] = ?n.
+
+
+  
+MethToMethInvoCnt[?fromMeth, ?toMeth] = ?n <-
+  agg<<?n = count()>> MethToMeth(?fromMeth, ?toMeth, _). 
+
+
+//Stats:Simple:InsensCallGraphEdge(?invo, ?toMeth),
+
+MethToMeth(?fromMeth,?toMeth,?invo) <-
+  SpecialMethodInvocation:Signature[?invo] = ?toMeth,
+  //CandidateInvocation(?invo),
+  Invocation:In[?invo] = ?fromMeth.
+
+MethToMeth(?fromMeth,?toMeth,?invo) <-
+  StaticMethodInvocation:Signature[?invo] = ?toMeth,
+  //CandidateInvocation(?invo),
+  Invocation:In[?invo] = ?fromMeth.
+
+MethToMeth(?fromMeth,?toMeth,?invo) <-
+  VirtualMethodInvocation:Signature[?invo] = ?toMeth,
+  //CandidateInvocation(?invo),
+  Invocation:In[?invo] = ?fromMeth.
+
+
+
+InvoGenCtx2(?from, ?tomethod, ?toCtx) <-
+  CallGraphEdge(_, ?from, ?toCtx , ?tomethod).
+
+InvoCtxCnt2[?from, ?method] = ?n <-
+  agg<<?n = count()>> InvoGenCtx2(?from, ?method, _).
+
+
+
+TwoInvo(?invocation), newTwoInvo(?invocation, ?meth) <-
+  InvoCtxCnt2[?invocation,?meth] > 1,
+  //InvoCtxCnt2[?invocation,?meth] > 1,
+  MethodSignatureRef(?meth),
+  MethodInvocationRef(?invocation).
+
+
+
+ForSInvo(?from,?meth,?fromCtx),
+MinseokVV(?from, ?fromCtx, ?toCtx, ?meth) <-
+  TwoInvo(?from),
+  CallGraphEdge(?fromCtx, ?from, ?toCtx, ?meth).
+
+
+
+SInvoCnt[?from,?meth] = ?n<-
+  agg<<?n = count()>> ForSInvo(?from,?meth,_).
+
+SInvo(?from) <-
+  SInvoCnt[?from,_] > 1.
+
+TargetInvocations(?from) <-
+  ?fromCtx1 != ?fromCtx2,
+  MinseokVV(?from, ?fromCtx1, ?toCtx, ?meth),
+  MinseokVV(?from, ?fromCtx2, ?toCtx, ?meth).
+
+
+SameCtx(?from) <-
+  TwoInvo(?from),
+  CallGraphEdge(?ctx, ?from, ?ctx, _).
+
+
+FormalVar(?var)<-
+  ThisVar[_] = ?var.
+
+
+FormalVar(?var) <-
+  FormalParam[_,_] = ?var.
+
+
+FormalVar(?to) <-
+  !StoreInstanceField(_, ?to,_,_),
+  !StoreArrayIndex(_, ?to, _),
+  AssignLocal(?from,?to,_),
+  FormalVar(?from).
+
+
+FormalVar(?to)<-
+  !StoreInstanceField(_, ?to,_,_),
+  !StoreArrayIndex(_, ?to, _),
+  AssignCast(_, ?from, ?to, _),
+  FormalVar(?from).
+
+
+
+SingleParamInvo(?invo) <-
+  MethodInvocationRef(?invo),
+  ActualParam[0, ?invo] = _,
+  !ActualParam[1, ?invo] = _.
+
+
+
+TheInvo(?invocation), FormalInvo(?invocation)<-
+  //TwoInvo(?invocation),
+  //SingleParamInvo(?invocation),
+  ActualParam[0,?invocation] = ?formal,
+  FormalVar(?formal),
+  ReachableInvo(?invocation),
+  StaticMethodInvocation:Signature[?invocation] = _.
+
+
+////////////////////////////////////////////////////////////////////////
+
+TheInvo(?invo), TheVirtual(?invo) <-
+  //TwoInvo(?invo),
+  ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  FormalVar(?var),
+  FormalVar(?base),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+
+
+TheInvo(?invo), TheSpecial(?invo) <-
+  //TwoInvo(?invo),
+  ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  FormalVar(?var),
+  FormalVar(?base),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+
+
+
+TheInvo(?invo) <-
+  //TwoInvo(?invo),
+  !ActualParam[_,?invo] = _,
+  FormalVar(?base),
+  ReachableInvo(?invo),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+
+
+TheInvo(?invo) <-
+  //TwoInvo(?invo),
+  !ActualParam[_,?invo] = _,
+  FormalVar(?base),
+  ReachableInvo(?invo),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+
+
+
+
+MySameCtx(?invo) <-
+  SInvo(?invo),
+  !TargetInvocations(?invo),
+  TwoInvo(?invo).
+
+
+////////////////////////////////// CandidateInvocation ///////////////////////////////////
+
+
+CandidateInvocation(?invo) <-
+  TheInvo(?invo).
+
+
+CandidateInvocation(?invo) <-
+  MySameCtx(?invo).
+
+
+CandidateInvocation(?invo) <-
+  SameCtx(?invo).
+
+
+
+AbstractClassMeth(?meth) <-
+  string:like(?mod,"abstract"),
+  ClassModifier(?mod, ?class),
+  MethodDeclaringClass[?meth] = ?class.
+
+
+TunnelingInvo(?invo) <-
+  ReachableInvo(?invo),
+  !I5(?invo),
+  CandidateInvocation(?invo).
+
+
+TunnelingInvo(?invo) <-
+  ReachableInvo(?invo),
+  !I5(?invo),
+  I4(?invo).
+
+

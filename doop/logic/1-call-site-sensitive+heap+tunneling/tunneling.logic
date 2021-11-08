@@ -1,0 +1,3 @@
+TunnelingAbstractionInvo(?invo)<-
+  TunnelingAbstraction(?invo).
+

@@ -1,0 +1,27 @@
+
+
+MyTargetVar(?to) <-
+  string:like(?sig,"%this$%"),
+  LoadInstanceField(_, ?sig, ?to, _).
+
+
+MyTargetVar(?to) <-
+  MyTargetVar(?from),
+  AssignLocal(?from, ?to, _).
+
+
+MyTargetVar(?to) <-
+  string:like(?from,"%@this%"),
+  string:notlike(?to,"%java.text%clone%"),
+  string:notlike(?to,"%java.util%ResourceBundle%"),
+  AssignLocal(?from, ?to, _).
+
+
+
+MyTargetVar(?to)<-
+  string:like(?from,"%@par%"),
+  AssignLocal(?from, ?to, _).
+
+
+
+

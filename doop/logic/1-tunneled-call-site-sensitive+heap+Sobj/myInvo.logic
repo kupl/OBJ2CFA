@@ -1,0 +1,28 @@
+
+
+ICSEInvocation(?invocation)<-
+  !Left2(?invocation),
+  //Feature51(?invocation),
+  MySuspectInvo(?invocation),
+  //!DirectPassInvo(?invocation),
+  MethodInvocationRef(?invocation).
+
+
+
+
+
+Feature50(?invocation)<-
+  string:like(?meth,"%java.util.regex%:%"),
+  Invocation:In[?invocation] = ?meth.
+
+
+Feature51(?invocation)<-
+  string:notlike(?meth,"%java.util.regex%:%"),
+  Invocation:In[?invocation] = ?meth.
+
+
+
+
+
+
+

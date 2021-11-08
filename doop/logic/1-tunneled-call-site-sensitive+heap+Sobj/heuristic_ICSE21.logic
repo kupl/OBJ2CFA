@@ -1,0 +1,531 @@
+
+ICSEInvocation(?invocation)<-//, I1(?invocation) <-
+  !Combined(?invocation),
+  //Feature69(?invocation),
+  !Left2(?invocation),
+  
+  //!Left(?invocation),
+  //!SuspectInvo(?invocation),
+  
+  //!InLogging(?invocation),
+  //!Combine1(?invocation),
+  //!InitialCall(?invocation),
+  //!InVector(?invocation),
+  //MySuspectInvo(?invocation),
+  
+  //!ResearchInvo(?invocation),
+  LearnInvocation(?invocation),
+  MethodInvocationRef(?invocation).
+
+
+
+/*
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature12(?invo), Feature17(?invo), Feature18(?invo), Feature3(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature49(?invo), Feature51(?invo), Feature52(?invo), Feature55(?invo), Feature58(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature52(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature12(?invo), Feature14(?invo), Feature17(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature56(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature42(?invo), Feature45(?invo), Feature46(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo), Feature65(?invo), Feature67(?invo), Feature68(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature64(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature17(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature39(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature55(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature36(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature3(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature44(?invo), Feature46(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature14(?invo), Feature17(?invo), Feature20(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature55(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature69(?invo), Feature11(?invo), Feature45(?invo), Feature46(?invo), Feature61(?invo), Feature49(?invo), Feature51(?invo), Feature22(?invo), Feature26(?invo), Feature59(?invo), Feature29(?invo), Feature63(?invo).
+*/
+
+
+
+
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature12(?invo), Feature17(?invo), Feature18(?invo), Feature3(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature49(?invo), Feature51(?invo), Feature52(?invo), Feature55(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature52(?invo), Feature55(?invo), Feature57(?invo),  Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo),  Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature12(?invo), Feature14(?invo), Feature17(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature37(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature56(?invo),  Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature42(?invo), Feature45(?invo), Feature46(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo),  Feature61(?invo), Feature63(?invo), Feature65(?invo), Feature67(?invo), Feature68(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature64(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature17(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature39(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature55(?invo),  Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature36(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo),  Feature61(?invo), Feature63(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo),  Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature3(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature44(?invo), Feature46(?invo), Feature49(?invo), Feature51(?invo), Feature53(?invo), Feature55(?invo), Feature57(?invo),  Feature61(?invo), Feature63(?invo), Feature65(?invo), Feature67(?invo), Feature69(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature67(?invo), Feature69(?invo), Feature11(?invo), Feature14(?invo), Feature17(?invo), Feature20(?invo), Feature22(?invo), Feature25(?invo), Feature26(?invo), Feature29(?invo), Feature5(?invo), Feature35(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), Feature55(?invo),  Feature61(?invo), Feature63(?invo).
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature69(?invo), Feature11(?invo), Feature45(?invo), Feature46(?invo), Feature61(?invo), Feature49(?invo), Feature51(?invo), Feature22(?invo), Feature26(?invo),  Feature29(?invo), Feature63(?invo).
+
+
+
+
+/*
+InAppStaticMethInvo(?invo) <-
+  StaticMethodInvocation:In(?invo, ?meth),
+  MethodDeclaringClass[?meth] = ?class,
+  ApplicationClass(?class).
+*/
+
+
+
+InterSec(?invo)<-
+  LearnInvocation(?invo),
+  AlInvo(?invo).
+
+
+//AlInvo(?invo) <-
+//  InAppMethInvo(?invo).
+
+AlInvo(?invo) <-
+  SuspectInvo(?invo).
+
+AlInvo(?invo) <-
+  Left(?invo).
+
+AlInvo(?invo) <-
+  ResearchInvo(?invo).
+
+
+/*
+Invo1(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature3(?invo), Feature5(?invo), Feature6(?invo), Feature9(?invo), Feature11(?invo), Feature13(?invo), Feature14(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature29(?invo), Feature30(?invo), Feature32(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature44(?invo), Feature46(?invo), Feature49(?invo), Feature51(?invo), 
+Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+
+Invo2(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature3(?invo), Feature5(?invo), Feature7(?invo), Feature8(?invo), Feature11(?invo), Feature12(?invo), Feature17(?invo), Feature18(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature29(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature49(?invo), Feature51(?invo), 
+Feature52(?invo), Feature55(?invo), Feature58(?invo), Feature63(?invo).
+
+
+Invo3(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature5(?invo), Feature11(?invo), Feature17(?invo), Feature19(?invo), Feature21(?invo), Feature22(?invo), Feature29(?invo), Feature31(?invo), Feature33(?invo), Feature35(?invo), Feature37(?invo), Feature39(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), 
+Feature53(?invo), Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+
+Invo4(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature2(?invo), Feature5(?invo), Feature11(?invo), Feature13(?invo), Feature15(?invo), Feature16(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature29(?invo), Feature35(?invo), Feature37(?invo), Feature38(?invo), Feature41(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), 
+Feature55(?invo), Feature57(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+
+Invo5(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature5(?invo), Feature11(?invo), Feature17(?invo), Feature20(?invo), Feature22(?invo), Feature25(?invo), Feature29(?invo), Feature35(?invo), Feature43(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), 
+Feature55(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+
+Invo6(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature0(?invo), Feature5(?invo), Feature11(?invo), Feature14(?invo), Feature17(?invo), Feature21(?invo), Feature22(?invo), Feature25(?invo), Feature29(?invo), Feature35(?invo), Feature45(?invo), Feature47(?invo), Feature49(?invo), Feature51(?invo), 
+Feature55(?invo), Feature59(?invo), Feature61(?invo), Feature63(?invo).
+
+Invo7(?invo),
+LearnInvocation(?invo)<-MethodInvocationRef(?invo), Feature11(?invo), Feature45(?invo), Feature46(?invo), Feature61(?invo), Feature49(?invo), Feature51(?invo), 
+Feature22(?invo), Feature59(?invo), Feature29(?invo), Feature63(?invo).
+*/
+/*
+InAppMethInvo(?invo)<-
+  Feature39(?invo),
+  string:notlike(?sig,"%(%,%)%"),
+  VirtualMethodInvocation:Signature[?invo] = ?sig,
+  Invocation:In[?invo] = ?meth,
+  MethodDeclaringClass[?meth] = ?class,
+  ApplicationClass(?class).
+*/
+
+
+
+
+/*
+
+InitialCall(?invo) <-
+  InvokeInitial(?invo),
+  !InIO(?invo),
+  !TakeMany(?invo),
+  //Feature39(?invo),
+  //Feature14(?invo),
+  //WeakFormalVar(?var),
+  //ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  //MyThisVar(?base),
+  //SpecialMethodInvocation:Base[?invo] = ?base,
+  //string:like(?inmeth,"%java.io%"),
+  //string:like(?inmeth,"%java.io%"),
+  //string:like(?inmeth,"%(%java.io.InputStream%)%"),
+  //SpecialMethodInvocation:In(?invo, ?inmeth).
+  string:like(?sig,"%java.io%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+InIO(?invo)<-
+  string:like(?inmeth,"%java.io%:%"),
+  Invocation:In[?invo]=?inmeth. 
+
+
+Combine1(?invo)<-
+  Feature15(?invo),
+  TakeOnlyConstantInt(?invo).
+
+
+
+InLogging(?invo)<-
+  string:like(?inmeth,"%java.util.logging%:%"),
+  Invocation:In[?invo]=?inmeth. 
+
+
+
+CloneInvo(?invo)<-
+  Feature14(?invo),
+  string:like(?sig,"%clone()%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+CloneInvo(?invo)<-
+  Feature14(?invo),
+  string:like(?sig,"%clone()%"),
+  VirtualMethodInvocation:Signature[?invo] = ?sig.
+
+
+
+TakeMany(?invo)<-
+  string:like(?inmeth,"%(%,%,%)%"),
+  Invocation:In[?invo]=?inmeth. 
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int)%"),
+  StaticMethodInvocation:Signature[?invo] = ?sig.
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int,int)%"),
+  StaticMethodInvocation:Signature[?invo] = ?sig.
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int)%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int,int)%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int)%"),
+  VirtualMethodInvocation:Signature[?invo] = ?sig.
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int,int)%"),
+  VirtualMethodInvocation:Signature[?invo] = ?sig.
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int)%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+TakeOnlyConstantInt(?invo)<-
+  !ActualParam[_, ?invo] = _,
+  !ActualParamN[_, ?invo] = _,
+  string:like(?sig,"%(int,int)%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+
+InVector(?invo) <-
+  Feature15(?invo),
+  Feature6(?invo),
+  InvokeInitial(?invo),
+  Feature20(?invo).
+
+
+
+PrivateMethod(?meth) <-
+  string:like(?mod,"private"),
+  MethodModifier(?mod,?meth).
+
+
+
+*/
+/*
+InitialCall(?invo) <-
+  InvokeInitial(?invo),
+  Feature39(?invo),
+  //Feature14(?invo),
+  //WeakFormalVar(?var),
+  //ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  //MyThisVar(?base),
+  //SpecialMethodInvocation:Base[?invo] = ?base,
+  string:like(?inmeth,"%java.io%"),
+  //string:like(?inmeth,"%java.io%"),
+  //string:like(?inmeth,"%(%java.io.InputStream%)%"),
+  SpecialMethodInvocation:In(?invo, ?inmeth).
+  //string:like(?sig,"%InputStream%:%"),
+  //SpecialMethodInvocation:Signature[?invo] = ?sig.
+*/
+
+/*
+OutputStream(?invo),
+InitialCall(?invo) <-
+  InvokeInitial(?invo),
+  //Feature14(?invo),
+  //WeakFormalVar(?var),
+  //ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  //MyThisVar(?base),
+  SpecialMethodInvocation:Base[?invo] = ?base,
+  StoreInstanceField(_, ?base, _, ?inmeth),
+  SpecialMethodInvocation:In(?invo, ?inmeth).
+  //string:like(?sig,"%OutputStream%:%"),
+  //SpecialMethodInvocation:Signature[?invo] = ?sig.
+*/
+/*
+
+
+InvokeInitial(?invo) <-
+  string:like(?sig,"%<init>%"),
+  SpecialMethodInvocation:Signature[?invo] = ?sig.
+
+
+
+*/
+/*
+InInitCall(?invo) <-
+  string:like(?inmeth,"%<init>%"),
+  SpecialMethodInvocation:In(?invo, ?inmeth).
+*/
+/*
+
+
+
+
+Feature50(?invocation)<-
+  string:like(?meth,"%regex%"),
+  Invocation:In[?invocation] = ?meth.
+Feature51(?invocation)<-
+  string:notlike(?meth,"%regex%"),
+  Invocation:In[?invocation] = ?meth.
+
+
+
+
+
+Feature46(?invo)<- 
+  I4(?invo),
+  MethodInvocationRef(?invo).
+
+Feature47(?invo)<- 
+  !I4(?invo),
+  MethodInvocationRef(?invo).
+
+Feature48(?invo)<- 
+  I5(?invo),
+  MethodInvocationRef(?invo).
+
+Feature49(?invo)<- 
+  !I5(?invo),
+  MethodInvocationRef(?invo).
+
+
+
+TheInvo(?invo), TheVirtual(?invo) <-
+  //TwoInvo(?invo),
+  ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  FormalVar(?var),
+  FormalVar(?base),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+
+
+TheInvo(?invo), TheSpecial(?invo) <-
+  //TwoInvo(?invo),
+  ActualParam[0,?invo] = ?var,
+  //SingleParamInvo(?invo),
+  FormalVar(?var),
+  FormalVar(?base),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+
+
+
+TheInvo(?invo) <-
+  //TwoInvo(?invo),
+  !ActualParam[_,?invo] = _, 
+  FormalVar(?base),
+  //ReachableInvo(?invo),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+
+
+TheInvo(?invo) <-
+  //TwoInvo(?invo),
+  !ActualParam[_,?invo] = _, 
+  FormalVar(?base),
+  //ReachableInvo(?invo),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+
+
+TheInvo(?invocation), FormalInvo(?invocation)<-
+  //TwoInvo(?invocation),
+  //SingleParamInvo(?invocation),
+  ActualParam[0,?invocation] = ?formal,
+  FormalVar(?formal),
+  //ReachableInvo(?invocation),
+  StaticMethodInvocation:Signature[?invocation] = _.
+
+FormalVar(?var)<-
+  ThisVar[_] = ?var.
+
+
+FormalVar(?var) <-
+  FormalParam[_,_] = ?var.
+
+
+FormalVar(?to) <-
+  !StoreInstanceField(_, ?to,_,_),
+  !StoreArrayIndex(_, ?to, _),
+  AssignLocal(?from,?to,_),
+  FormalVar(?from).
+
+
+FormalVar(?to)<-
+  !StoreInstanceField(_, ?to,_,_),
+  !StoreArrayIndex(_, ?to, _),
+  AssignCast(_, ?from, ?to, _),
+  FormalVar(?from).
+
+
+
+SingleParamInvo(?invo) <-
+  MethodInvocationRef(?invo),
+  ActualParam[0, ?invo] = _,
+  !ActualParam[1, ?invo] = _.
+
+
+TheInvo(?invo)<-
+  //ReachableInvo(?invo),
+  FormalVar(?var),
+  ActualParam[0,?invo] = ?var,
+  SingleParamInvo(?invo),
+  LoadInstanceField(?this, _, ?base, _),
+  MyThisVar(?this),
+  SingleMethodInvocations(?invo),
+  VirtualMethodInvocation:Base[?invo] = ?base.
+
+
+TheInvo(?invo)<-
+  //ReachableInvo(?invo),
+  FormalVar(?var),
+  ActualParam[0,?invo] = ?var,
+  SingleParamInvo(?invo),
+  LoadInstanceField(?this, _, ?base, _),
+  MyThisVar(?this),
+  SingleMethodInvocations(?invo),
+  SpecialMethodInvocation:Base[?invo] = ?base.
+
+
+
+SingleMethodInvocations(?invo) <-
+  MethToMeth(?fromMeth,?toMeth,?invo),
+  ?n = 1,
+  MethToMethInvoCnt[?fromMeth,?toMeth] = ?n.
+
+
+MethToMeth(?fromMeth,?toMeth,?invo) <-
+  SpecialMethodInvocation:Signature[?invo] = ?toMeth,
+  //CandidateInvocation(?invo),
+  Invocation:In[?invo] = ?fromMeth.
+
+MethToMeth(?fromMeth,?toMeth,?invo) <-
+  StaticMethodInvocation:Signature[?invo] = ?toMeth,
+  //CandidateInvocation(?invo),
+  Invocation:In[?invo] = ?fromMeth.
+
+MethToMeth(?fromMeth,?toMeth,?invo) <-
+  VirtualMethodInvocation:Signature[?invo] = ?toMeth,
+  //CandidateInvocation(?invo),
+  Invocation:In[?invo] = ?fromMeth.
+
+
+MethToMethInvoCnt[?fromMeth, ?toMeth] = ?n <-
+  agg<<?n = count()>> MethToMeth(?fromMeth, ?toMeth, _).
+
+AbstractClassMeth(?meth) <-
+  //string:notlike(?mod,"%final%"),
+  string:like(?mod,"abstract"),
+  //string:like(?mod,"public"),
+  ClassModifier(?mod, ?class),
+  MethodDeclaringClass[?meth] = ?class.
+
+
+
+I4(?invo) <-
+  TheInvo(?invo).
+
+I4(?invo) <-
+  InitInInit(?invo).
+
+
+I5(?invo)<-
+  //ReachableInvo(?invo),
+  !ActualParam[2, ?invo] = _,
+  ActualParam[1, ?invo] = ?base1,
+  ActualParam[0, ?invo] = ?base,
+  StaticMethodInvocation:In(?invo,?inmeth),
+  AssignHeapAllocation(_, ?base1, ?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+I5(?invo)<-
+  //ReachableInvo(?invo),
+  !ActualParam[1, ?invo] = _,
+  ActualParam[0, ?invo] = ?base,
+  StaticMethodInvocation:In(?invo,?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+
+I5(?invo)<-
+  //ReachableInvo(?invo),
+  !ActualParam[1, ?invo] = _,
+  ActualParam[0, ?invo] = ?var,
+  VirtualMethodInvocation:Base[?invo] = ?base,
+  VirtualMethodInvocation:In(?invo, ?inmeth),
+  AssignHeapAllocation(_, ?var, ?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+I5(?invo)<-
+  //ReachableInvo(?invo),
+  !ActualParam[0, ?invo] = _,
+  VirtualMethodInvocation:Base[?invo] = ?base,
+  VirtualMethodInvocation:In(?invo, ?inmeth),
+  AssignHeapAllocation(_, ?base, ?inmeth).
+
+
+MyThisVar(?var) <-
+  ThisVar[_] = ?var.
+
+
+MyThisVar(?to) <-
+  MyThisVar(?from),
+  AssignLocal(?from, ?to, _).
+
+
+
+InitInInit(?invo)<-
+  RealInitMeth(?inmeth),
+  SingleMethodInvocations(?invo),
+  //!ActualParam[_,?invo] = _,
+  string:like(?tometh,"%<init>%"),
+  string:like(?inmeth,"%<init>%"),
+  MyThisVar(?this),
+  StoreInstanceField(?base, ?this, _, ?inmeth),
+  SpecialMethodInvocation:Signature[?invo] = ?tometh,
+  //Stats:Simple:InsensCallGraphEdge(?invo, ?tometh),
+  //AssignHeapAllocation(_, ?base, ?inmeth),
+  SpecialMethodInvocation:Base[?invo] = ?base,
+  SpecialMethodInvocation:In(?invo,?inmeth).
+
+
+
+RealInitMeth(?inmeth)<-
+  SpecialMethodInvocation:In(?invo, ?inmeth),
+  //Invocation:In[?invo] = ?inmeth,
+  AbstractClassMeth(?tometh),
+  //SpecialMethocInvocation(?invo,_ ,?tometh,_).
+  SpecialMethodInvocation:Signature[?invo] = ?tometh.
+  //Stats:Simple:InsensCallGraphEdge(?invo, ?tometh).
+
+*/

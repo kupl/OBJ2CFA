@@ -1,0 +1,44 @@
+--- logic/library/string-constants.logic	2013-01-16 07:31:46.000000000 +1100
++++ logic/library/string-constants.logic	2016-08-29 10:07:54.000000000 +1000
+@@ -67,6 +67,18 @@
+   HeapAllocationValue(?constant, "<<string-constant>>").
+ #endif
+ 
++ReflectionStringConstant(?heap) -> HeapAllocationRef(?heap).
++
++#ifdef DISTINGUISH_SPECIFIED_STRING_CONSTANTS
++HeapAllocation:Merge[?heap] = ?constant <-
++  StringConstant(?heap),
++  ! DistinctStringConstant(?heap),
++  HeapAllocationValue(?constant, "<<string-constant>>").
++
++HeapAllocation:ContextInsensitive(?heap) <-
++  DistinctStringConstant(?heap).
++#endif
++
+ #ifdef DISTINGUISH_CLASS_STRING_CONSTANTS
+ HeapAllocation:Merge[?heap] = ?constant <-
+   StringConstant(?heap),
+@@ -114,7 +126,12 @@
+  * String buffers and builders
+  *************************************************************/
+ 
+-#ifdef MERGE_STRING_BUFFERS
++HeapAllocation:Merge[?heap] = ?mergeHeap <-
++  HeapAllocation:Type[?heap] = ?type,
++  Type:Value(?type:"java.lang.String"),
++  ! StringConstant(?heap),
++  HeapAllocationValue(?mergeHeap, "<<string-object>>").
++
+ HeapAllocation:Merge[?heap] = ?mergeHeap <-
+   HeapAllocation:Type[?heap] = ?type,
+   Type:Value(?type:"java.lang.StringBuffer"),
+@@ -124,7 +141,7 @@
+   HeapAllocation:Type[?heap] = ?type,
+   Type:Value(?type:"java.lang.StringBuilder"),
+   HeapAllocationValue(?mergeHeap, "<<string-builder>>").
+-#endif
++
+ 
+ /*************************************************************
+  * Throwable

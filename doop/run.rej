@@ -1,0 +1,106 @@
+--- run	2013-01-16 07:38:09.000000000 +1100
++++ run	2016-08-29 14:24:46.000000000 +1000
+@@ -157,6 +157,8 @@
+ mainclass=""
+ os="unix"
+ dynamics=""
++beanctx=""
++distStrConst=""
+ logicProfile=""
+ logLevel=""
+ refine="false"
+@@ -235,6 +237,12 @@
+       CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_NO_STRING_CONSTANTS"
+       shift 1
+       ;;
++    "-distinguish-specified-string-constants")
++      CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_SPECIFIED_STRING_CONSTANTS"
++      shift 1
++	  distStrConst="$1"
++	  shift 1
++      ;;
+     "-merge-string-buffers")
+       CPPFLAGS_STRING_BUFFERS="-DMERGE_STRING_BUFFERS"
+       shift 1
+@@ -295,6 +303,11 @@
+       dynamics="${dynamics} $1"
+       shift 1
+       ;;
++    "-bean-context")
++      shift 1
++      beanctx="$1"
++      shift 1
++      ;;
+     "-logicProfile")
+       shift 1
+       logicProfile="-logicProfile $1"
+@@ -668,6 +681,33 @@
+ 	# 	timing $bloxbatch -db $database -addBlock -file tmp/spanning.logic
+ 	# fi
+ 
++
++   # Read contexts computed by BEAN
++	if [ ! "x$beanctx" = "x" ]; then
++		echo "loading BEAN heap context ... $beanctx"
++		cat > tmp/beanctx.import <<EOF
++option,delimiter,"	"
++option,hasColumnNames,false
++
++fromFile,"$(readlink -f $beanctx)",a,allochctx,b,allocator,c,heap,d,newhctx
++toPredicate,BeanHeapContext,allochctx,allocator,heap,newhctx
++EOF
++		$bloxbatch -db $database -import $(pwd)/tmp/beanctx.import
++	fi
++
++	# Read the string constants which need to be distinguished
++	if [ ! "x$distStrConst" = "x" ]; then
++		cat > tmp/distStrConst.import <<EOF
++option,delimiter,"	"
++option,hasColumnNames,false
++
++fromFile,"$(readlink -f $distStrConst)",a,heap
++toPredicate,DistinctStringConstant,heap
++EOF
++		$bloxbatch -db $database -import $(pwd)/tmp/distStrConst.import
++	fi
++
++
+ 	echo -n "loading $analysis rules "
+ 
+ 	if test "$logMemStats" = "true"; then
+@@ -986,6 +1026,30 @@
+ 
+ ###############################################################################
+ 
++#echo $originalCommandLine
++
++# extract name of first jar as program name
++jarList=($jars)
++filename=$(basename ${jarList[0]})
++programname="${filename%.*}"
++#echo $programname
++
++strfile="tmp/$programname.refstr"
++contextfile="tmp/$programname-BeanContext.facts"
++#echo $strfile
++#echo $contextfile
++
++
++if [[ $analysis == bean-* ]]; then
++	python scripts/bean.py $analysis $originalCommandLine
++	beanctx=$contextfile
++fi
++
++if [ -f $strfile ]; then
++    distStrConst=$strfile
++fi
++
++
+ singleRun
+ init-analysis
+ 
+@@ -1022,3 +1086,4 @@
+ size=$(pollFootprint $database)
+ $bloxbatch -db $database -execute "+Stats:Runtime($size, \"disk footprint (with stats) (KB)\")."
+ printf "\n%-80s %'.0f\n" "disk footprint (with stats) (KB)" $size
++
