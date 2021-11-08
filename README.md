@@ -83,6 +83,20 @@ If you want to analyze a program with our state-of-the-art call-site sensitivity
 $ ./run -jre1.6 1-tunneled-call-site-sensitive+heap <pgm.jar>
 ```
 
+### Analyzing a Program with a Customized Tunneling Abstraction
+You can also analyze a program with your own tunneling abstraction. To do so, you need to modify `TunnelingAbstraction.facts` file. The file includes a set of invocation sites that will be tunneled during the analysis. After the modification, type:
+
+```
+$ ./run -jre1.6 1-call-site-sensitive+heap+tunneling <pgm.jar>
+```
+
+For example, if you modify `TunnelingAbstraction.facts` to include empty set (e.g., `$ echo "" > TunnelingAbstraction.facts`), the program will be analyzed under conventional 1-call-site sensitivity without context tunneling. You can also run 1-object sensitivity with your tunneling abstraction by typing the following command:
+
+```
+$ ./run -jre1.6 1-object-sensitive+heap+tunneling <pgm.jar>
+```
+
+
 ### Artifact (VirtualBox Image)
 We've archived a ready-to-run version of our implementation in zenodo([Link](https://zenodo.org/record/5652640#.YYjZq3UzYwY))
 
