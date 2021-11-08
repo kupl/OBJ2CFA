@@ -33,10 +33,10 @@ If you need to install Datalog engine, please visit [this page](http://snf-70553
 
 ### Verifying Installation
 
-Verifying installation is very easy. First, move to "OBJ2CFA/doop/". Then, you can check the installation by running the following command:
+Verifying installation is very easy. First, move to 'doop/' folder. Then, you can check the installation by running the following command:
 
 ```
-$ ./run.py 1callH+SL luindex
+$ ./run -jre1.6 1-tunneled-call-site-sensitive+heap jars/dacapo/luindex.jar
 ```
 
 You will see the results as follows:
@@ -61,4 +61,28 @@ The results say that
 - The program to be analyzed is luindex
 - The analysis 51.32 seconds
 - The results for the clients (VarPtsTo, #may-fail casts, #call-graph-edges, #reachable-methods, #polymorphic-calls)
+
+### Running Doop
+First, move to `doop/` foler. The command below runs Doop:
+
+```
+$ ./run -jre1.6 <analysis> <pgm.jar>
+```
+
+The analyses can be found in 'doop/logic' folder. For example, you can analyze a program `foo.jar` with 2-object-sensitivity with the following command:
+
+```
+$ ./run -jre1.6 2-object-sensitive+heap foo.jar
+```
+
+ 
+### Running Doop with 1callH+SL
+If you want to analyze a program with our state-of-the-art call-site sensitivity (e.g., 1callH+SL in our paper), use the following command:
+ 
+```
+$ ./run -jre1.6 1-tunneled-call-site-sensitive+heap <pgm.jar>
+```
+
+### Artifact (VirtualBox Image)
+We've archived a ready-to-run version of our implementation in zenodo([Link](https://zenodo.org/record/5652640#.YYjZq3UzYwY))
 
