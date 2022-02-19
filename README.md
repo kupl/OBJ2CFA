@@ -53,20 +53,20 @@ vagrant ssh
 vagrant halt
 ```
 
-For running doop, Datalog engine need to be additionally installed. Please visit [this page](http://snf-705535.vm.okeanos.grnet.gr/agreement.html) and download .deb for Ubuntu 18.04 LTS (e.g., 'pa-datalog_0.5-1bionic.deb') and follow the instructions.
+For running doop, Datalog engine need to be additionally installed. Please visit [this page](http://snf-705535.vm.okeanos.grnet.gr/agreement.html) and download `.deb` for Ubuntu 18.04 LTS (e.g., `pa-datalog_0.5-1bionic.deb`) and follow the instructions.
 
-For example, install '.deb' package:
+For example, install `.deb` package:
 
 ```sh
 sudo dpkg -i pa-datalog_0.5-1bionic.deb
 sudo apt-get install -f
 ```
 
-Set 'JAVA_HOME':
+Set `JAVA_HOME`:
 ```sh
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ```
-Source 'lb-env-bin.sh' script:
+Source `lb-env-bin.sh` script:
 ```sh
 source /opt/lb/pa-datalog/lb-env-bin.sh
 ```
@@ -86,7 +86,7 @@ If you need to install Datalog engine, please visit [this page](http://snf-70553
 
 ### Verifying Installation
 
-Verifying installation is very easy. First, move to 'doop/' folder. Then, you can check the installation by running the following command:
+Verifying installation is very easy. First, move to `doop/` folder. Then, you can check the installation by running the following command:
 
 ```
 $ ./run -jre1.6 1-tunneled-call-site-sensitive+heap jars/dacapo/luindex.jar
@@ -122,7 +122,7 @@ First, move to `doop/` foler. The command below runs Doop:
 $ ./run -jre1.6 <analysis> <pgm.jar>
 ```
 
-The analyses can be found in 'doop/logic' folder. For example, you can analyze a program `foo.jar` with 2-object-sensitivity with the following command:
+The analyses can be found in `doop/logic` folder. For example, you can analyze a program `foo.jar` with 2-object-sensitivity with the following command:
 
 ```
 $ ./run -jre1.6 2-object-sensitive+heap foo.jar
