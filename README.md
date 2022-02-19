@@ -15,11 +15,59 @@ This is the implementation of our POPL'22 paper "Return of CFA: Call-Site Sensit
 
 - A 64-bit Ubuntu system
 - A Java 8 distribution
-- A Python 2.x interpreter
 
 Please set your `JAVA_HOME` environment variable to point to your Java installation directory.
 
-### Setup Instruction
+### Vagrant Box
+We provide a Vagrant Box to easily setup environment for our tool. The Vagrantfile is supplied to build a box with Ubuntu 18.04 LTS running on VirtualBox machine. For installation and detailed manual of it, read [Vagrant](https://vagrantup.com).
+
+
+You can customize virtual machine, depending on your system spec. The following part of `Vagrantfile` can be modified for such purpose
+
+```ruby
+Vagrant.configure("2") do |config|
+  config.vagrant.plugins = ["vagrant-disksize", "vagrant-vbguest"]
+  config.disksize.size = "20GB"
+  # ...
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = "2"
+    # ...
+  end  
+  # ...
+end
+```
+
+A command below from the project directory (where `Vagrantfile` is located) creates a virtual machine and installs some dependencies, which may be better to be installed on system. If you want to configure it, see `bootstrap.sh`.
+
+```sh
+vagrant up
+```
+
+Next, you should install main `dd-klee`. This proedure is done with `provision`, the subcommand of `vagrant`. Provisioning with `klee_deps` builds some dependencies (e.g. STP) from source. This is done by the script `install_deps.sh`. Provisioning with `klee` builds our extension of KLEE. The script `install_klee.sh` is used and it includes `cmake` usage described in the section [From Source](#From-Source).
+
+```sh
+vagrant provision --with-provision klee_deps,klee
+```
+
+Now you can `ssh` the Ubuntu 18.04 VirtualBox machine and use our tool. It's easy to halt the machine after exitting ssh session.
+
+```sh
+vagrant ssh
+
+# halt the machine after exitting ssh
+vagrant halt
+```
+
+If you've done `vagrant up` once, it is not necessary to update and install dependent softwares (by `bootstrap.sh`) every time you run the machine. Then, the option  `--no-provision` is useful to power on the machine quickly.
+
+```sh
+vagrant up --no-provision
+```
+
+
+
+
 
 ### Installing Datalog Engine
 
