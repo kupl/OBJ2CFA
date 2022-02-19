@@ -26,13 +26,12 @@ You can customize virtual machine, depending on your system spec. The following 
 
 ```ruby
 Vagrant.configure("2") do |config|
-  config.vagrant.plugins = ["vagrant-disksize", "vagrant-vbguest"]
-  config.disksize.size = "20GB"
+  # ...
+  config.vm.box = "ubuntu/bionic64"
   # ...
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "2048"
-    vb.cpus = "2"
-    # ...
+    vb.memory = "8192"
+  # ...
   end  
   # ...
 end
