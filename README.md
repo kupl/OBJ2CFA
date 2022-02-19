@@ -5,6 +5,7 @@ This is the implementation of our POPL'22 paper "Return of CFA: Call-Site Sensit
 
 * [Getting-Started Guide](#Getting-Started-Guide)
   * [Requirements](#Requirements)
+  * [Vagrant Box](#Vagrant-Box)
   * [Setup Instruction](#Setup-Instruction)
   * [Verifying Installation](#Verifying-Installation)
 * [Artifact](#Artfact)
@@ -37,16 +38,10 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-A command below from the project directory (where `Vagrantfile` is located) creates a virtual machine and installs some dependencies, which may be better to be installed on system. If you want to configure it, see `bootstrap.sh`.
+A command below from the project directory (where `Vagrantfile` is located) creates a virtual machine and installs some dependencies, which may be better to be installed on system (e.g., java 8). If you want to configure it, see `bootstrap.sh`. 
 
 ```sh
 vagrant up
-```
-
-Next, you should install main `dd-klee`. This proedure is done with `provision`, the subcommand of `vagrant`. Provisioning with `klee_deps` builds some dependencies (e.g. STP) from source. This is done by the script `install_deps.sh`. Provisioning with `klee` builds our extension of KLEE. The script `install_klee.sh` is used and it includes `cmake` usage described in the section [From Source](#From-Source).
-
-```sh
-vagrant provision --with-provision klee_deps,klee
 ```
 
 Now you can `ssh` the Ubuntu 18.04 VirtualBox machine and use our tool. It's easy to halt the machine after exitting ssh session.
@@ -58,14 +53,25 @@ vagrant ssh
 vagrant halt
 ```
 
-If you've done `vagrant up` once, it is not necessary to update and install dependent softwares (by `bootstrap.sh`) every time you run the machine. Then, the option  `--no-provision` is useful to power on the machine quickly.
+For running doop, Datalog engine need to be additionally installed. Please visit [this page](http://snf-705535.vm.okeanos.grnet.gr/agreement.html) and download .deb for Ubuntu 18.04 LTS (e.g., 'pa-datalog_0.5-1bionic.deb') and follow the instructions.
+
+For example, install '.deb' package:
 
 ```sh
-vagrant up --no-provision
+sudo dpkg -i pa-datalog_0.5-1bionic.deb
+sudo apt-get install -f
 ```
 
+Set 'JAVA_HOME':
+```sh
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+```
+Source 'lb-env-bin.sh' script:
+```sh
+source /opt/lb/pa-datalog/lb-env-bin.sh
+```
 
-
+Then, you can run doop. Please follow the [Verifying Installation](#Verifying-Installation).
 
 
 ### Installing Datalog Engine
