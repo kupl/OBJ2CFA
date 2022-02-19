@@ -62,7 +62,7 @@ sudo dpkg -i pa-datalog_0.5-1bionic.deb
 sudo apt-get install -f
 ```
 
-Set `JAVA_HOME`:
+Set `JAVA_HOME` to an appropriate path:
 ```sh
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ```
@@ -71,7 +71,7 @@ Source `lb-env-bin.sh` script:
 source /opt/lb/pa-datalog/lb-env-bin.sh
 ```
 
-Then, you can run doop. Please follow the [Verifying Installation](#Verifying-Installation).
+Now, you can run doop. Please follow the [Verifying Installation](#Verifying-Installation).
 
 
 ### Installing Datalog Engine
