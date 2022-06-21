@@ -112,8 +112,8 @@ polymorphic virtual call sites       908
 The results say that
 
 - The program to be analyzed is luindex
-- The analysis 51.32 seconds
-- The results for the clients (VarPtsTo, #may-fail casts, #call-graph-edges, #reachable-methods, #polymorphic-calls)
+- The analysis took 51.32 seconds
+- The results over the clients (VarPtsTo, #may-fail casts, #call-graph-edges, #reachable-methods, #polymorphic-calls)
 
 ### Running Doop
 First, move to `doop/` foler. The command below runs Doop:
